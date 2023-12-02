@@ -13,8 +13,17 @@ which "${BROWSER}" || { echo "ERROR: missing ${BROWSER}, please install it on th
 # default input is prusaslicer.html
 : "${INPUT:=prusaslicer.html}"
 
-# articles are under https://help.prusa3d.com/article/... (or http)
-lynx -dump -listonly -hiddenlinks=listonly -nonumbers "${INPUT}" | grep com/article | sort | uniq > urls.txt
+if [[ ! -f "${INPUT}" ]]; then
+  echo "WARNING: Missing ${INPUT} file, did you forget to make it?"
+else
+  # articles are under https://help.prusa3d.com/article/... (or http)
+  lynx -dump -listonly -hiddenlinks=listonly -nonumbers "${INPUT}" | grep com/article | sort | uniq > urls.txt
+fi
+
+if [[ ! -f "urls.txt" ]]; then
+  echo "ERROR: Missing urls.txt file, did you forget to make it?"
+  exit 1
+fi
 
 # where to store output pdf files
 output_dir=$(basename "${INPUT}" .html)
