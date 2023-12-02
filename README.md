@@ -1,2 +1,3 @@
 # 3d-print
-Various things related to 3D printing
+
+Various things related to 3D printing.
