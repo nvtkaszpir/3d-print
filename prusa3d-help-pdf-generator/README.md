@@ -1,4 +1,4 @@
-# prusa3d pdf generator
+# prusa3d help pdf generator
 
 Fetch pages from help.prusa3d.com and make them as PDF for offline reading.
 
