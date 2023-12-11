@@ -1,0 +1,4 @@
+[Thumbnailer Entry]
+TryExec=gcode-with-thumbnail-thumbnailer.py
+Exec=gcode-with-thumbnail-thumbnailer.py %i %o %s
+MimeType=text/x.gcode;
