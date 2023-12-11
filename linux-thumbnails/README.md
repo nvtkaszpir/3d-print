@@ -11,7 +11,9 @@ Linux thumbnail generation scripts for various files when using file managers.
 ## Requirements
 
 - git
+- imagemagick to convert images
 - make (under Ubuntu it is in `build-essential` package)
+- openscad to convert certain files to images
 - python3
 
 ## Installation
@@ -20,7 +22,7 @@ Install system packages, Ubuntu example:
 
 ```shell
 sudo apt-get update
-sudo apt get install -y build-essential openscad python3-pip git python3-zipp
+sudo apt get install -y build-essential openscad python3-pip git imagemagick python3-zipp
 
 ```
 
