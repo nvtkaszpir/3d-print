@@ -2,8 +2,10 @@
 
 Fetch pages from help.prusa3d.com and make them as PDF for offline reading.
 
-<!-- markdownlint-disable-next-line html -->
-<img src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg" width="32px" alt="PDF icon">
+<!-- markdownlint-disable html line-length -->
+<img src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg" width="16px" alt="PDF icon"> + <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcci_ihHlaQrtKYWEQe0PbDgoJBWvWhtkoY5kAg7v4bsBeiQVR43_qeU1X3_9aCTgAwFE&usqp=CAU" height="16px" alt="Josef Prusa"> =
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Heart_coraz%C3%B3n.svg/1280px-Heart_coraz%C3%B3n.svg.png" height="16px" alt="Love">
+<!-- markdownlint-enable html line-length -->
 
 ## Requirements
 
