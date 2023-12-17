@@ -2,6 +2,9 @@
 
 Fetch pages from help.prusa3d.com and make them as PDF for offline reading.
 
+<!-- markdownlint-disable-next-line html -->
+<img src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg" width="32px" alt="PDF icon">
+
 ## Requirements
 
 - Linux operating system
