@@ -2,21 +2,31 @@
 
 Linux thumbnail generation scripts for various files when using file managers.
 
+![linux-thumbnails](./linux-thumbnails.png)
+
+## Features
+
+- stl - render via OpenScad
+- 3mf - extract thumbnail file
+- gcode - extract thumbnail
+
 ## Known limitations
 
-- no .bgcode support yet
-- .3mf files must have Metadata/thumbnail.png inside to have a preview
-- .gcode must have thumbnail embedded to be extracted (PrusaSlicer does that)
+- Ubuntu 22.04 tested only
 - Works with XFCE4 Thunar and sends requests to generate thumbnails to thumbler.
-- Probbaly does not work over network shares (file manager restrictions)
+- Probably does not work over network shares (file manager restrictions)
 - Tested in user install only (I was lazy)
+
+- no .bgcode support yet
+- 3mf files must have Metadata/thumbnail.png inside to have a preview
+- gcode must have thumbnail embedded to be extracted (PrusaSlicer does that)
 
 ## Requirements
 
 - git
 - imagemagick to convert images
-- make (under Ubuntu it is in `build-essential` package)
-- openscad to convert certain files to images
+- make (`apt install -y  build-essential` package)
+- openscad to convert certain files to images (`apt install -y openscad`)
 - python3
 
 ## Installation
@@ -77,3 +87,14 @@ You can also run scripts directly.
 3mf: Processing "/home/kaszpir/.local/bin/3mf-thumbnailer.py", "empty.3mf", "empty.png"
 3mf: File extracted successfully
 ```
+
+## Todo
+
+- 3mf extract models and generate preview from it, PrusaSlicer can extract it
+  but have to deal with multiple models somehow
+- [bgcode](https://github.com/prusa3d/libbgcode/blob/main/doc/bgcode.md)
+  - install bgcode binary (need co compile it, though)
+  - copy .bgcode to temp dir
+  - invoke `bgcode file.bgcode`, this will generate `file.gcode`
+  - run thumbnail extraction on `file.gcode`
+- pass extracted gcode via gcode2png if thumbnail is missing

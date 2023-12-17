@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="application/vnd.ms-3mfdocument">
-     <comment>3D Manufacturing Format</comment>
-     <icon name="application-x-3mf"/>
-     <glob-deleteall/>
-     <glob pattern="*.3mf"/>
+    <comment>3D Manufacturing Format</comment>
+    <icon name="application-x-3mf"/>
+    <glob-deleteall/>
+    <glob pattern="*.3mf"/>
   </mime-type>
 </mime-info>

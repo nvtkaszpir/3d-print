@@ -1,11 +1,7 @@
-#!/usr/bin/env python3
-
 # source https://www.reddit.com/r/3Dprinting/comments/132lesb/3mf_thumbnails_on_linux/
 # added extra output for better visibility of what happens
 
-
 # unfinished, not tested
-
 
 import sys
 import zipfile

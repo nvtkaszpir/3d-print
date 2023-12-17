@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # gcode-with-thumbnail-thumbnailer.py - A Gnome 3 thumbnailer for gcode with an embedded thumbnail
 #
