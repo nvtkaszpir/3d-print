@@ -20,3 +20,8 @@ Use at your own risk.
 
 - [prusa3d-metrics-list](prusa3d-metrics-list/README.md)
   get metrics that can be send from PrusaFirmwareBuddy devices to syslog server
+
+- [stl-to-png](stl-to-png/README.md)
+  Use PrusaSlicer to generate images per slice, useful for woodworks.
+
+  ![skull_w_jaw](./stl-to-png/skull_w_jaw.gif)
