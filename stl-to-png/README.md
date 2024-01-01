@@ -10,21 +10,24 @@ Example [skull_w_jaw.stl](https://www.printables.com/model/2770-human-skull-anat
 ## About
 
 This can be useful in for example wood works, when you want to convert
-model to a actual physical object from a series of planks, where each plank
+model to an actual physical object from a series of planks, where each plank
 is cut to the shape of each layer.
 
 The output files can be printed on the normal paper printer and then the shapes
-can be cut from the planks and stacked together.
+can be transferred to planks, and then wood fragments cut from the planks
+can be stacked together, glued and finished with other tools to make a wooden
+sculpture.
 
 ## Known limitations
 
 I just did quickest option to render model to images, it has some limitations,
 such as:
 
-- using default profile for the SLS printer (portrait, 4k resolution etc)
-- need to adjust model scale and position accordingly (center, rotate)
+- tested with STL files only
 - remember to adjust layer height so it is the size od the planks you have
-- tested with STL only
+- need to adjust model scale and position accordingly (center, rotate)
+- using default profile for the SLS printer (portrait, 4k resolution etc)
+- output images must be scaled to the paper print area, keep each scale equal
 
 ## Further work
 
@@ -32,7 +35,10 @@ such as:
 
 It is possible to do it better with normal PrusaSlicer and creating
 custom printer on the base of SL1S. This way you can get much better control of
-what is happening, especially to reposition the model etc.
+what is happening, especially to reposition the model, layer height,
+remove supports and padding etc.
+Slice and export SL1 file and then rename it to .zip and unpack, and you have
+a bunch of files you can process and print on paper printer.
 
 ## Merging images to video
 
