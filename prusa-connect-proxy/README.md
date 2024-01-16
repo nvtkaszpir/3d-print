@@ -2,6 +2,10 @@
 
 Create HTTP forward proxy for Prusa Connect for LAN.
 
+```text
+[3d-printer + special cfg] -> [ host with nginx] -> [connect.prusa3d.com]
+```
+
 ## Requirements
 
 - firmware on the printer supports Prusa Connect - so you probably need
