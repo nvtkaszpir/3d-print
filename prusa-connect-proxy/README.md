@@ -6,14 +6,16 @@ Create HTTP forward proxy for Prusa Connect for LAN.
 [3d-printer + special cfg] -> [ host with nginx] -> [connect.prusa3d.com]
 ```
 
+## Known Limitations
+
+- nginx runs as root, in the future adjust to [docker-nginx-unprivileged](https://github.com/nginxinc/docker-nginx-unprivileged)
+- not tested with any print, just telemetry, so maybe config tunign on nginx
+  side is required
+
 ## Requirements
 
 - firmware on the printer supports Prusa Connect - so you probably need
   firmware newer than 2023.10.1 for given printer (excluding alpha versions)
-
-## Known Limitations
-
-- nginx runs as root, in the future adjust to [docker-nginx-unprivileged](https://github.com/nginxinc/docker-nginx-unprivileged)
 
 ## Usage
 
