@@ -11,6 +11,11 @@ Use at your own risk.
 
   ![linux-thumbnails](linux-thumbnails/linux-thumbnails.png)
 
+- [prusa-connect-proxy](prusa-connect-proxy/README.md)
+  run Prusa printer through HTTP proxy and capture whatever it does!
+
+  `printer <-- http --> proxy <-- https --> connect.prusa3d.com`
+
 - [prusa3d-help-pdf-generator](prusa3d-help-pdf-generator/README.md)
   generate PDF files from Prusa3d help articles, for example for offline read
   <!-- markdownlint-disable html line-length -->
