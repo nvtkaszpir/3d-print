@@ -1,15 +1,16 @@
+---
 version: "3"
 
 services:
   nginx:
     container_name: nginx
-    image: docker.io/library/nginx:1.25.3
+    image: openresty/openresty:1.25.3.1-0-jammy
     ports:
       - "8889:8889/tcp"
     environment:
-      TZ: 'UTC/Etc'
+      TZ: "UTC/Etc"
     volumes:
-      - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro"
       - "./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro"
     restart: unless-stopped
     healthcheck:
@@ -20,15 +21,15 @@ services:
       timeout: 2s
 
   nginx-metrics:
-    container_name: nginx-metrics
-    image: nginx/nginx-prometheus-exporter
-    command: -nginx.scrape-uri http://nginx:8080/metrics
+    container_name: nginx_metrics
+    image: "nginx/nginx-prometheus-exporter"
+    command: "-nginx.scrape-uri http://nginx:8080/metrics"
     ports:
       - "9113:9113/tcp"
     environment:
-      TZ: 'UTC/Etc'
+      TZ: "UTC/Etc"
     restart: unless-stopped
-    # this is distroless, so don't bother
+    # this is distroless, so don't bother with healchcheck
     # healthcheck:
     #   test: curl --fail http://localhost:9113/health || exit 1
     #   interval: 10s

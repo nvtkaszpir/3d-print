@@ -2,22 +2,44 @@
 
 Create HTTP forward proxy for Prusa Connect for LAN.
 
-```text
-[3d-printer + special cfg] --HTTP--> [ host with nginx] --HTTPS--> [connect.prusa3d.com]
+```mermaid
+sequenceDiagram
+    printer->>proxy: POST status over HTTP
+    proxy->>connect.prusa3d.com: proxy pass request over HTTPS
+    connect.prusa3d.com->>proxy: HTTPS Response with optional body with commands or gcode
+    proxy->>printer: decapsulate and forward via HTTP
+    proxy->>proxy: log request/response
+
+
 ```
 
-## Known Limitations
+# Known Limitations
 
-- nginx runs as root, in the future adjust to [docker-nginx-unprivileged](https://github.com/nginxinc/docker-nginx-unprivileged)
 - not tested with any print, just telemetry, so maybe config tunign on nginx
   side is required
+- you can not have debug and normal proxies up and running on the same port with
+  docker-compose
 
-## Requirements
+# Todo
+
+- maybe [json log](https://github.com/openresty/docker-openresty/blob/master/nginx.conf)?
+
+# Requirements
 
 - firmware on the printer supports Prusa Connect - so you probably need
   firmware newer than 2023.10.1 for given printer (excluding alpha versions)
+- docker-compose to run containers
+- printer and docker-compose host should be in the same network to make life easier
 
-## Usage
+# Usage
+
+## Difference between versions
+
+- `prusa-connect-proxy-debug` - dumps traffic to log files under `logs/` dir,
+  which will turn HUGE use it for just to see around what runs in the network
+  for few hours
+- `prusa-connect-proxy-stdout` - run in normal mode with basic logs to stdout
+  and stderr, **this is preferred way** to run it in day to day operation
 
 ## Quick how to
 
@@ -28,9 +50,9 @@ Create HTTP forward proxy for Prusa Connect for LAN.
 
 ## Long howto
 
-### Spawn docker container with nginx listening on 8889
+### Spawn docker container with nginx
 
-Spawn docker container with nginx listening on 8889:
+Spawn docker container with nginx listening on `8889`:
 
 ```shell
 docker-compose up
@@ -89,9 +111,14 @@ nginx  | 192.168.1.25 - - [16/Jan/2024:21:49:29 +0000] "POST /p/telemetry HTTP/1
 nginx  | 192.168.1.25 - - [16/Jan/2024:21:49:33 +0000] "POST /p/telemetry HTTP/1.1" 204 0 "-" "-" "-"
 ```
 
-## Run nginx in background
+## Run nginx in the background
 
 ```shell
 docker-compose stop
 docker-compose up -d
 ```
+
+## Switching between debug or stdout setup
+
+Ensure to stop old container in other directory prior starting a new one.
+Actually docker probably will scream that ports are already used, anyway.
