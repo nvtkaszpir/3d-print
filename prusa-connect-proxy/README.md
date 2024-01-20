@@ -1,17 +1,7 @@
 # prusa-connect-proxy
 
 Create HTTP forward proxy for Prusa Connect for LAN.
-
-```mermaid
-sequenceDiagram
-    printer->>proxy: POST status over HTTP
-    proxy->>connect.prusa3d.com: proxy pass request over HTTPS
-    connect.prusa3d.com->>proxy: HTTPS Response with optional body with commands or gcode
-    proxy->>printer: decapsulate and forward via HTTP
-    proxy->>proxy: log request/response
-
-
-```
+This should help in certain situations such as corporate or air-gapped networks.
 
 By default two ports are listening:
 
@@ -20,10 +10,21 @@ By default two ports are listening:
 
 Why? See below in [known limitations](#known-limitations).
 
+Connection diagram:
+
+```mermaid
+sequenceDiagram
+    printer->>proxy: POST status over HTTP
+    proxy->>connect.prusa3d.com: proxy pass request over HTTPS to a loadbalancer
+    connect.prusa3d.com->>proxy: HTTPS Response with optional body with commands or gcode
+    proxy->>printer: decapsulate and forward via HTTP
+    proxy->>proxy: log request/response
+```
+
 # Known Limitations
 
 - you can not have debug and normal proxies up and running on the same port with
-  docker-compose
+  docker-compose (well it is possible, but requires much more tweaking...)
 
 - certain printers have some compute limits and thus they do not connect to
   `connect.prusa3d.com` but to `buddy-a.connect.prusa3d.com` which uses different
@@ -32,7 +33,9 @@ Why? See below in [known limitations](#known-limitations).
   in `nginx/conf.d/default.conf` (it is default now)
 
 - if you have mixed setup of different printers you may want to host two proxy
-  instances on different ports, which redirect to different upstreams
+  instances on different ports, which redirect to different upstreams.
+  Current setup supports is, just select different port for different pool of
+  the printers.
 
 # Todo
 
@@ -83,7 +86,8 @@ over LAN network, let say it is `my-proxy-ip`.
 
     make sure to define `[service::connect]` section as below,
     just make sure to replace `my-proxy-ip` with the address of the host
-    that runs docker with nginx and `myRandomToken` with some token
+    that runs docker with nginx, port to `8889` or `8890` depending on the
+    printer's capabilities and `myRandomToken` with some token
     (no idea how to generate yet):
 
     ```ini
@@ -136,3 +140,8 @@ docker-compose up -d
 
 Ensure to stop old container in other directory prior starting a new one.
 Actually docker probably will scream that ports are already used, anyway.
+
+# Other notes
+
+If it works then you may want to tweak configs to disable proxy cahce or logs,
+but then I assume you already know what to do with the configs :)
