@@ -6,11 +6,13 @@ services:
     container_name: nginx_debug
     image: openresty/openresty:1.25.3.1-0-jammy
     ports:
-      - "8889:8889/tcp"
+      - "8889:8889/tcp" # buddy-a.connect.prusa3d.com
+      - "8890:8890/tcp" # connect.prusa3d.com
     environment:
       TZ: "UTC/Etc"
     volumes:
       - "./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro"
+      - "./nginx/lua_snippet.conf:/etc/nginx/lua_snippet.conf:ro"
       - "./nginx/conf.d/:/etc/nginx/conf.d/:ro"
       - "./logs/:/var/log/nginx/:rw"
     restart: unless-stopped

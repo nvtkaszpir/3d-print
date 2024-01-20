@@ -13,12 +13,26 @@ sequenceDiagram
 
 ```
 
+By default two ports are listening:
+
+- `8889` for `buddy-a.connect.prusa3d.com`
+- `8890` for `connect.prusa3d.com`
+
+Why? See below in [known limitations](#known-limitations).
+
 # Known Limitations
 
-- not tested with any print, just telemetry, so maybe config tunign on nginx
-  side is required
 - you can not have debug and normal proxies up and running on the same port with
   docker-compose
+
+- certain printers have some compute limits and thus they do not connect to
+  `connect.prusa3d.com` but to `buddy-a.connect.prusa3d.com` which uses different
+  cert without Certificata Authority chain. If you try to upload file via
+  Prusa Connect to the printer and it fails, then change address to `buddy-a...`
+  in `nginx/conf.d/default.conf` (it is default now)
+
+- if you have mixed setup of different printers you may want to host two proxy
+  instances on different ports, which redirect to different upstreams
 
 # Todo
 
