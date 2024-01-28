@@ -5,6 +5,7 @@ services:
   nginx:
     container_name: nginx
     image: openresty/openresty:1.25.3.1-0-jammy
+    read_only: true
     ports:
       - "8889:8889/tcp" # buddy-a.connect.prusa3d.com
       - "8890:8890/tcp" # connect.prusa3d.com
@@ -13,6 +14,27 @@ services:
     volumes:
       - "./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro"
       - "./nginx/conf.d/:/etc/nginx/conf.d/:ro"
+      - type: tmpfs
+        target: /var/run/
+        tmpfs:
+          size: 32K
+      - type: tmpfs
+        target: /tmp/nginx/
+        tmpfs:
+          size: 64M
+      # - type: tmpfs
+      #   target: /tmp/nginx/cache
+      # - type: tmpfs
+      #   target: /tmp/nginx/client_body_temp
+      # - type: tmpfs
+      #   target: /tmp/nginx/proxy_temp
+      # - type: tmpfs
+      #   target: /tmp/nginx/fastcgi_temp
+      # - type: tmpfs
+      #   target: /tmp/nginx/uwsgi_temp
+      # - type: tmpfs
+      #   target: /tmp/nginx/scgi_temp
+
     restart: unless-stopped
     healthcheck:
       test: curl --fail http://localhost:8080/health || exit 1
@@ -24,6 +46,7 @@ services:
   nginx-metrics:
     container_name: nginx_metrics
     image: "nginx/nginx-prometheus-exporter"
+    read_only: true
     command: "-nginx.scrape-uri http://nginx:8080/metrics"
     ports:
       - "9113:9113/tcp"

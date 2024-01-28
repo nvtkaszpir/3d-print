@@ -28,7 +28,7 @@ sequenceDiagram
 
 - certain printers have some compute limits and thus they do not connect to
   `connect.prusa3d.com` but to `buddy-a.connect.prusa3d.com` which uses different
-  cert without Certificata Authority chain. If you try to upload file via
+  cert without Certificate Authority chain. If you try to upload file via
   Prusa Connect to the printer and it fails, then change address to `buddy-a...`
   in `nginx/conf.d/default.conf` (it is default now)
 
@@ -53,7 +53,7 @@ sequenceDiagram
 ## Difference between versions
 
 - `prusa-connect-proxy-debug` - dumps traffic to log files under `logs/` dir,
-  which will turn HUGE use it for just to see around what runs in the network
+  which will turn HUGE, use it for just to see around what runs in the network
   for few hours
 - `prusa-connect-proxy-stdout` - run in normal mode with basic logs to stdout
   and stderr, **this is preferred way** to run it in day to day operation
@@ -143,5 +143,5 @@ Actually docker probably will scream that ports are already used, anyway.
 
 # Other notes
 
-If it works then you may want to tweak configs to disable proxy cahce or logs,
+If it works then you may want to tweak configs to disable proxy cache or logs,
 but then I assume you already know what to do with the configs :)
