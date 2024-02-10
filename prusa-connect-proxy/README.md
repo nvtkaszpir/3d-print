@@ -45,29 +45,40 @@ sequenceDiagram
 
 - firmware on the printer supports Prusa Connect - so you probably need
   firmware newer than 2023.10.1 for given printer (excluding alpha versions)
-- docker-compose to run containers
-- printer and docker-compose host should be in the same network to make life easier
+- (optional) docker-compose to run containers
+- printer and proxy host should be in the same network to make life easier
 
 # Usage
 
 ## Difference between versions
 
-- `prusa-connect-proxy-debug` - dumps traffic to log files under `logs/` dir,
-  which will turn HUGE, use it for just to see around what runs in the network
-  for few hours
-- `prusa-connect-proxy-stdout` - run in normal mode with basic logs to stdout
-  and stderr, **this is preferred way** to run it in day to day operation
+- `basic` - absolutely minimal configs to use with your own nginx config,
+  for example this was tested on Raspberry Pi 3
+- `prusa-connect-proxy-debug` - requires docker, dumps traffic to log files
+  under `logs/` dir, which will turn HUGE, use it for just to see around what
+  runs in the network for few hours
+- `prusa-connect-proxy-stdout` - requires docker, run in normal mode with basic
+  logs to stdout and stderr, **this is preferred way** to run it in day to day
+  operation
 
 ## Quick how to
 
-1. spawn docker container with nginx listening on 8889
+1. spawn nginx listening on 8889 and 8890
 2. configure printer to use that nginx instance
 3. ...
 4. profit
 
 ## Long howto
 
-### Spawn docker container with nginx
+### Without containers
+
+See [this readme](basic/README.md).
+Then come back and read further sections how to configure printer.
+
+### With containers
+
+Make sure host which runs this proxy has static address, for example it static
+in DHCP config in given network.
 
 Spawn docker container with nginx listening on `8889`:
 
@@ -75,8 +86,8 @@ Spawn docker container with nginx listening on `8889`:
 docker-compose up
 ```
 
-write down IP address under which container is reachable
-over LAN network, let say it is `my-proxy-ip`.
+use `ip a` to list addresses and write down IP address under which container is
+reachable over LAN network, let say it is `my-proxy-ip`.
 
 ### Configure printer to use that nginx instance
 
@@ -129,7 +140,7 @@ nginx  | 192.168.1.25 - - [16/Jan/2024:21:49:29 +0000] "POST /p/telemetry HTTP/1
 nginx  | 192.168.1.25 - - [16/Jan/2024:21:49:33 +0000] "POST /p/telemetry HTTP/1.1" 204 0 "-" "-" "-"
 ```
 
-## Run nginx in the background
+## Run containers in the background
 
 ```shell
 docker-compose stop
