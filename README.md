@@ -16,6 +16,11 @@ Use at your own risk.
 
   `printer <-- http --> proxy <-- https --> connect.prusa3d.com`
 
+- [prusa-link-no-password](prusa-link-no-password/README.md)
+  access Prusa printer through HTTP proxy so you don't have to type in password
+
+  `your laptop <-- http --> proxy injecting auth <-- http --> printer`
+
 - [prusa3d-help-pdf-generator](prusa3d-help-pdf-generator/README.md)
   generate PDF files from Prusa3d help articles, for example for offline read
   <!-- markdownlint-disable html line-length -->
