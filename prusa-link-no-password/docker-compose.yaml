@@ -1,0 +1,37 @@
+---
+version: "3"
+
+services:
+  nginx:
+    container_name: nginx_proxy
+    image: openresty/openresty:1.25.3.1-0-jammy
+    read_only: true
+    ports:
+      - "10001:10001/tcp" # printer1.conf
+    environment:
+      TZ: "UTC/Etc"
+    volumes:
+      - "./nginx/conf.d/:/etc/nginx/conf.d/:ro"
+      - type: tmpfs
+        target: /var/run/
+        tmpfs:
+          size: 32K
+      - type: tmpfs
+        target: /var/run/openresty/
+        tmpfs:
+          size: 1G
+      - type: tmpfs
+        target: /usr/local/openresty/nginx/logs/
+        tmpfs:
+          size: 1G
+      - type: tmpfs
+        target: /tmp/nginx/
+        tmpfs:
+          size: 64M
+    restart: unless-stopped
+    healthcheck:
+      test: curl --fail http://localhost:8080/health || exit 1
+      interval: 10s
+      retries: 2
+      start_period: 5s
+      timeout: 2s
