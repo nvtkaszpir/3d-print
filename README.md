@@ -11,6 +11,12 @@ Use at your own risk.
 
   ![linux-thumbnails](linux-thumbnails/linux-thumbnails.png)
 
+- [obico-ml-api-only](obico-ml-api-only/README.md)
+  run Obico ML API without anything, so you can use it with other projects.
+  Also script to draw detections on images.
+
+  ![example small](./obico-ml-api-only/example_small.png)
+
 - [prusa-connect-proxy](prusa-connect-proxy/README.md)
   run Prusa printer through HTTP proxy and capture whatever it does!
 
