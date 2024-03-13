@@ -1,0 +1,46 @@
+---
+version: "3"
+
+services:
+  obico-ml-api:
+    hostname: ml_api
+    container_name: obico_ml_api
+    image: quay.io/kaszpir/ml_api:db1338dd-amd64
+    read_only: true
+    tty: true
+    # setting timeout to avoid queuing requests that will be dropped anyway
+    # command: bash -c "gunicorn --bind 0.0.0.0:3333 --workers 8 --timeout 60 wsgi"
+    command: bash -c "gunicorn --disable-redirect-access-to-syslog --error-logfile - --access-logfile - --bind 0.0.0.0:3333 --workers 1 --threads 8 --timeout 60 --statsd-host=statsd:9125 --statsd-prefix=service.ml_api wsgi"
+    ports:
+      - "3333:3333"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '1'
+          memory: 32M
+    environment:
+      TZ: "UTC/Etc"
+      DEBUG: "True"
+      FLASK_APP: "server.py"
+      PYTHONDONTWRITEBYTECODE: "1"
+      # STATSD_HOST: "statsd-exporter.prometheus-statsd-exporter"
+      # STATSD_PORT: "9125"
+      # STATSD_PREFIX: "obico.ml_api"
+      TIMEOUT_CONNECT: "0.2"
+
+    volumes:
+      - type: tmpfs
+        target: /tmp
+        tmpfs:
+          size: 1G
+
+    restart: unless-stopped
+    healthcheck:
+      test: curl --fail http://localhost:3333/hc/ || exit 1
+      interval: 10s
+      retries: 2
+      start_period: 5s
+      timeout: 2s
