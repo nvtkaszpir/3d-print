@@ -1,6 +1,8 @@
 # obico-ml-api-only
 
-Spawn [Obico ML API](https://www.obico.io/docs/server-guides/) container without any authentication.
+Spawn [Obico ML API](https://www.obico.io/docs/server-guides/) container without any authentication
+or any other Obico apps. This is for people that REALLY just want to have an API
+for image detections, which can be further scripted with other tools.
 
 Container image is from my modified app version - just extra debug messages and minor
 tweaks, AI model is as is. You can find git sha which was used for builds in
