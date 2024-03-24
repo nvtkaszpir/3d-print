@@ -71,10 +71,34 @@ python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obi
 ```
 <!-- markdownlint-enable html line-length -->
 
-And you should get output such as:
+and it should produce output such as:
 
 - [out.json](./out.json)
 - [out.jpg](./out.jpg)
+
+With additional options `--show-below-treshold`:
+<!-- markdownlint-disable html line-length -->
+```shell
+python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obico/bad_1.jpg --savedet out-below.json --saveimg out-below.jpg --show-below-treshold
+```
+<!-- markdownlint-enable html line-length -->
+
+you should see blue areas that are below treshold:
+
+- [out.json](./out-below.json)
+- [out.jpg](./out-below.jpg)
+
+With option `--treshold=0.4`:
+<!-- markdownlint-disable html line-length -->
+```shell
+python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obico/bad_1.jpg --savedet out-t04.json --saveimg out-t04.jpg --treshold=0.4
+```
+<!-- markdownlint-enable html line-length -->
+
+You will see only specific areas:
+
+- [out.json](./out-t04.json)
+- [out.jpg](./out-t04.jpg)
 
 ### Other notes
 
