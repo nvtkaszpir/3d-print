@@ -110,28 +110,55 @@ def do_detect(raw_pic_url, api_url=ML_API_HOST):
 
 
 @click.command()
-@click.option("--show/--no-show", default=False)
-@click.option("--api", default="http://127.0.0.1:3333")
+@click.option(
+    "--show/--no-show",
+    default=False,
+    help="show image with detections directly when executing (a bit annoying)",
+)
+@click.option(
+    "--api", default="http://127.0.0.1:3333", help="obico ml_api address endpoint"
+)
+@click.option(
+    "saveimg",
+    "--saveimg",
+    type=click.Path(),
+    help="save image with detections given file for example out.jpg",
+)
+@click.option(
+    "savedet", "--savedet", type=click.Path(), help="save detections to given json file"
+)
 @click.argument("url")
-def process_image(url, show, api):
+def process_image(url, show, api, saveimg, savedet):
     """fetch image, do detection and draw detected boxes on the image"""
     logging.info(f"api={api}")
     logging.info(f"show={show}")
     logging.info(f"url={url}")
-    if show:
-        req = requests.get(url, stream=True)
-        req.raise_for_status()
-
+    logging.info(f"saveimg={saveimg}")
+    logging.info(f"savedet={savedet}")
+    req = requests.get(url, stream=True)
+    req.raise_for_status()
     detections = do_detect(url, api)
-    detections_to_visualize = detections
-    # detections_to_visualize = [d for d in detections if d[1] > VISUALIZATION_THRESH]
+    detections_json = json.dumps(detections)
+    logging.info(f"detections: {detections_json}")
 
-    print(json.dumps(detections))
-    if show:
+    if savedet:
+        with open(savedet, "w") as fp:
+            fp.write(json.dumps(detections))
+        logging.info(f"saved detection json to {savedet}")
+
+    if show or saveimg:
+        detections_to_visualize = detections
+        detections_to_visualize = [d for d in detections if d[1] > VISUALIZATION_THRESH]
         image_with_detections = overlay_detections(
             Image.open(req.raw), detections_to_visualize
         )
+
+    if show:
         image_with_detections.show()
+
+    if saveimg:
+        image_with_detections.save(saveimg)
+        logging.info(f"saved detection image to {saveimg}")
 
 
 if __name__ == "__main__":

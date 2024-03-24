@@ -29,17 +29,22 @@ The target url can be also a real working camera if it is able to return image p
 for example [esphome web server](https://esphome.io/components/esp32_camera_web_server.html)
 with `snapshot` mode will work.
 
-### Draw detections
+### Install dependencies
+
+```shell
+pip install -r requirements.txt
+
+```
+
+### Draw detections with preview
 
 For pure example purposes replace `https://bagno.hlds.pl/obico/bad_1.jpg` with the url to the image from the camera.
 The URL must point to the address that is resolvable and reachable by the processes within the container.
 
-  <!-- markdownlint-disable html line-length -->
+<!-- markdownlint-disable html line-length -->
 
 ```shell
-$ pip install -r requirements.txt
-
-$ python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obico/bad_1.jpg --show
+python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obico/bad_1.jpg --show
 
 INFO:root:api=http://127.0.0.1:3333
 INFO:root:show=True
@@ -51,9 +56,27 @@ DEBUG:urllib3.connectionpool:http://127.0.0.1:3333 "GET /p/?img=https%3A%2F%2Fba
 [["failure", 0.502, [758.0, 969.0, 113.0, 160.0]], ["failure", 0.44, [1012.0, 959.0, 121.0, 174.0]], ["failure", 0.241, [1034.0, 1066.0, 120.0, 176.0]], ["failure", 0.238, [939.0, 967.0, 134.0, 161.0]], ["failure", 0.174, [921.0, 1062.0, 164.0, 184.0]], ["failure", 0.163, [797.0, 1051.0, 117.0, 154.0]], ["failure", 0.1, [801.0, 1140.0, 140.0, 86.0]]]
 
 ```
-  <!-- markdownlint-enable html line-length -->
+<!-- markdownlint-enable html line-length -->
 
 ![example](./example.png)
+(No the printer is not skewed, this is the effect of camera lens distortion because it is not perpendicular to the bed)
+
+### Draw detections without preview
+
+You can run parameters such as `--saveimg` and `--savedet` to save output to files without preview, for easier scripting:
+
+<!-- markdownlint-disable html line-length -->
+```shell
+python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obico/bad_1.jpg --savedet out.json --saveimg out.jpg
+```
+<!-- markdownlint-enable html line-length -->
+
+And you should get output such as:
+
+- [out.json](./out.json)
+- [out.jpg](./out.jpg)
+
+### Other notes
 
 Notice that TRESHOLD value by default is `0.2`
 Color codes:
@@ -64,7 +87,7 @@ Color codes:
 - black -  detection in dead zone as defined in `draw_detections.py`
 
 Notice that ml_api is processing whole image, so my example image above with
-the date, can trigger false spagetti detections :)
+the date, can trigger false spaghetti detections :)
 
 ## Example Node-RED flow
 
@@ -89,7 +112,7 @@ sequenceDiagram
     esp32cam->>node-red: save camera image to be accessible as static content
     node-red->>obico_ml_api: send request to process image
     obico_ml_api->>node-red: response with detections list
-    node-red->>node-red: process detecions list
+    node-red->>node-red: process detections list
     node-red->>discord: send message to Discord
 
 ```
