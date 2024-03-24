@@ -116,6 +116,12 @@ def do_detect(raw_pic_url, api_url=ML_API_HOST):
     help="show image with detections directly when executing (a bit annoying)",
 )
 @click.option(
+    "show_below_treshold",
+    "--show-below-treshold/--no-show-below-treshold",
+    default=False,
+    help="show detections below treshold on the images",
+)
+@click.option(
     "--api", default="http://127.0.0.1:3333", help="obico ml_api address endpoint"
 )
 @click.option(
@@ -127,9 +133,17 @@ def do_detect(raw_pic_url, api_url=ML_API_HOST):
 @click.option(
     "savedet", "--savedet", type=click.Path(), help="save detections to given json file"
 )
+@click.option(
+    "treshold",
+    "--treshold",
+    default=VISUALIZATION_THRESH,
+    help=f"treshold for visualizations, notice that this is separate to obico ml_api treshold, default {VISUALIZATION_THRESH}",
+)
 @click.argument("url")
-def process_image(url, show, api, saveimg, savedet):
+def process_image(url, show, api, saveimg, savedet, treshold, show_below_treshold):
     """fetch image, do detection and draw detected boxes on the image"""
+    logging.info(f"treshold={treshold}")
+    VISUALIZATION_THRESH = float(treshold)
     logging.info(f"api={api}")
     logging.info(f"show={show}")
     logging.info(f"url={url}")
@@ -148,7 +162,11 @@ def process_image(url, show, api, saveimg, savedet):
 
     if show or saveimg:
         detections_to_visualize = detections
-        detections_to_visualize = [d for d in detections if d[1] > VISUALIZATION_THRESH]
+        if not show_below_treshold:
+            detections_to_visualize = [
+                d for d in detections if d[1] > VISUALIZATION_THRESH
+            ]
+
         image_with_detections = overlay_detections(
             Image.open(req.raw), detections_to_visualize
         )

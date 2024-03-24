@@ -78,10 +78,10 @@ And you should get output such as:
 
 ### Other notes
 
-Notice that TRESHOLD value by default is `0.2`
+Notice that TRESHOLD value by default is `0.2` (as in default for obico ml_api)
 Color codes:
 
-- blue - below TRESHOLD
+- blue - below TRESHOLD (drawn only if you use `--show-below-treshold`)
 - green - above TRESHOLD
 - red - above 2x TRESHOLD, usually model is REALLY sure there is a spaghetti
 - black -  detection in dead zone as defined in `draw_detections.py`
