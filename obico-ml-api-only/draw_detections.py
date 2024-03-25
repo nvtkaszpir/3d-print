@@ -157,7 +157,7 @@ def process_image(url, show, api, saveimg, savedet, treshold, show_below_treshol
 
     if savedet:
         with open(savedet, "w") as fp:
-            fp.write(json.dumps(detections))
+            fp.write(json.dumps(detections) + "\n")
         logging.info(f"saved detection json to {savedet}")
 
     if show or saveimg:
