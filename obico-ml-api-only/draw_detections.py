@@ -17,7 +17,12 @@ VISUALIZATION_THRESH = 0.2
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # dead zones are defined as top left corner + width/height
-DEAD_ZONES = [[320, 32, 640, 64]]  # center x, center y, width, height
+DEAD_ZONES = [
+    [320, 32, 640, 64],  # timestamps
+    [210, 600, 420, 1200],  # left camera open space
+    [1500, 600, 200, 1200],  # right camera open space
+    [1500, 600, 198, 1200],
+]  # center x, center y, width, height
 
 
 def is_in_dead_zone(d):
