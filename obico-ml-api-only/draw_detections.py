@@ -7,6 +7,7 @@ import requests
 import logging
 from urllib.request import urlopen
 from PIL import Image, ImageDraw, ImageFile, ImageFont
+import json
 
 logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
 
@@ -15,44 +16,6 @@ VISUALIZATION_THRESH = 0.2
 
 # fix for getting images from url
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-
-# dead zones are defined as top left corner + width/height
-DEAD_ZONES = [
-    [320, 32, 640, 64],  # timestamps
-    [210, 600, 420, 1200],  # left camera open space
-    [1500, 600, 200, 1200],  # right camera open space
-    [1500, 600, 198, 1200],
-]  # center x, center y, width, height
-
-
-def is_in_dead_zone(d):
-    """return true if detected box is in dead zone
-
-    this is required to avoid false positives dues to extra elements on the images
-    such as timestamps
-
-    Args:
-        detection (_type_): _description_
-        dead_zones (_type_): _description_
-    """
-    (xc, yc, w, h) = map(int, d)
-    (x1, y1), (x2, y2) = (xc - w // 2, yc - h // 2), (xc + w // 2, yc + h // 2)
-
-    for dead in DEAD_ZONES:
-        (deadxc, deadyc, deadw, deadh) = map(int, dead)
-        (deadx1, deady1), (deadx2, deady2) = (
-            deadxc - deadw // 2,
-            deadyc - deadh // 2,
-        ), (deadxc + deadw // 2, deadyc + deadh // 2)
-
-        # just check if the center od the detected box is in the dead zone
-        if (deadx1 < xc) and (deady1 < yc):
-            # If bottom-right innerbox corner is inside the bounding box
-            if (xc < deadx2) and (yc < deady2):
-                # print('whole box is inside dead zone')
-                return True
-
-    return False
 
 
 def threshold_to_color(threshold):
@@ -77,41 +40,73 @@ def threshold_to_color(threshold):
     return (255, 255, 255, 255)  # white
 
 
-def overlay_detections(img, detections):
+def detection_to_box(coords):
+    """convert detection coords normal box coords"""
+    (xc, yc, w, h) = map(int, coords)
+    (x1, y1), (x2, y2) = (xc - w // 2, yc - h // 2), (xc + w // 2, yc + h // 2)
+    points = (x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)
+
+    return points
+
+
+def draw_coords(draw, coords, text, color=(128, 128, 128, 255), width=3, font_size=16):
+    """draw coords on the draw object, in given color"""
+    points = detection_to_box(coords)
+    (x1, y1) = points[0]
+
+    draw.line(points, fill=color, width=width)
+    font = ImageFont.truetype("arial", font_size)
+
+    draw.text((x1 + width, y1 + width), text, font=font)
+    logging.debug(f"draw coords={coords} text={text} color={color}")
+
+
+def overlay_detections(img, detections, ignored, ignore):
     """generate image with detections as overlay boxes"""
-    draw = ImageDraw.Draw(img)
-    width = 3
-    font_size = 16
+    draw = ImageDraw.Draw(img, "RGBA")
 
-    for dead in DEAD_ZONES:
-        (xc, yc, w, h) = map(int, dead)
-        (x1, y1), (x2, y2) = (xc - w // 2, yc - h // 2), (xc + w // 2, yc + h // 2)
-        points = (x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)
-        draw.line(points, fill=(0, 255, 255, 255), width=1)  # cyan for dead zones
+    # draw dead zones in cyan
+    for d in ignore:
+        color = (0, 255, 255, 255)
+        fill = (0, 255, 255, 32)
+        points = detection_to_box(d)
+        shape = [points[0], points[2]]
+        draw_coords(draw=draw, text="ignore", coords=d, color=color, width=3)
+        draw.rectangle(xy=shape, fill=fill, width=1)
 
+    # draw ignored detections
+    for d in ignored:
+        threshold = d[1]
+        color = threshold_to_color(0.0)
+        text = "{:.3f}".format(threshold)
+        draw_coords(draw=draw, text=text, coords=d[2], color=color, width=3)
+
+    # draw detections
     for d in detections:
         threshold = d[1]
-        if is_in_dead_zone(d[2]):
-            threshold = 0.0
         color = threshold_to_color(threshold)
-
-        (xc, yc, w, h) = map(int, d[2])
-        (x1, y1), (x2, y2) = (xc - w // 2, yc - h // 2), (xc + w // 2, yc + h // 2)
-        points = (x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)
-
-        draw.line(points, fill=color, width=width)
-        font = ImageFont.truetype("arial", font_size)
         text = "{:.3f}".format(threshold)
-        draw.text((x1 + width, y1 + width), text, font=font)
+        draw_coords(draw=draw, text=text, coords=d[2], color=color, width=1)
+
     return img
 
 
-def do_detect(raw_pic_url, api_url=ML_API_HOST):
+def do_detect(raw_pic_url, api_url=ML_API_HOST, ignore=""):
     """perform image failure detection"""
-    req = requests.get(api_url + "/p/", params={"img": raw_pic_url}, verify=False)
+    detections = []
+    ignored = []
+    req = requests.get(
+        api_url + "/p/", params={"img": raw_pic_url, "ignore": ignore}, verify=False
+    )
     req.raise_for_status()
-    detections = req.json()["detections"]
-    return detections
+
+    if "detections" in req.json():
+        detections = req.json()["detections"]
+
+    if "ignored" in req.json():
+        ignored = req.json()["ignored"]
+
+    return detections, ignored
 
 
 @click.command()
@@ -130,6 +125,11 @@ def do_detect(raw_pic_url, api_url=ML_API_HOST):
     "--api", default="http://127.0.0.1:3333", help="obico ml_api address endpoint"
 )
 @click.option(
+    "--ignore",
+    default="[]",
+    help="ignored regions on the image, must be json list of lists",
+)
+@click.option(
     "saveimg",
     "--saveimg",
     type=click.Path(),
@@ -144,21 +144,37 @@ def do_detect(raw_pic_url, api_url=ML_API_HOST):
     default=VISUALIZATION_THRESH,
     help=f"treshold for visualizations, notice that this is separate to obico ml_api treshold, default {VISUALIZATION_THRESH}",
 )
-@click.argument("url")
-def process_image(url, show, api, saveimg, savedet, treshold, show_below_treshold):
+@click.argument("img_url")
+def process_image(
+    img_url, show, api, ignore, saveimg, savedet, treshold, show_below_treshold
+):
     """fetch image, do detection and draw detected boxes on the image"""
     logging.info(f"treshold={treshold}")
     VISUALIZATION_THRESH = float(treshold)
     logging.info(f"api={api}")
+    logging.info(f"ignore={ignore}")
     logging.info(f"show={show}")
-    logging.info(f"url={url}")
+    logging.info(f"img_url={img_url}")
     logging.info(f"saveimg={saveimg}")
     logging.info(f"savedet={savedet}")
-    req = requests.get(url, stream=True)
+
+    ignore_str = ignore
+    ignore_list = json.loads(ignore)
+    if not all(isinstance(elem, list) for elem in ignore_list):
+        logging.warn(
+            f"Failed to parse ignore param as list of lists, assuming empty list."
+        )
+        ignore = []
+        ignore_str = ""
+    logging.info(f"ignore_list: {ignore_list}")
+
+    req = requests.get(img_url, stream=True)
     req.raise_for_status()
-    detections = do_detect(url, api)
+    detections, ignored = do_detect(img_url, api, ignore_str)
     detections_json = json.dumps(detections)
+    ignored_json = json.dumps(ignored)
     logging.info(f"detections: {detections_json}")
+    logging.info(f"ignored: {ignored_json}")
 
     if savedet:
         with open(savedet, "w") as fp:
@@ -167,13 +183,17 @@ def process_image(url, show, api, saveimg, savedet, treshold, show_below_treshol
 
     if show or saveimg:
         detections_to_visualize = detections
+        ignored_to_visualize = ignored
         if not show_below_treshold:
             detections_to_visualize = [
                 d for d in detections if d[1] > VISUALIZATION_THRESH
             ]
 
         image_with_detections = overlay_detections(
-            Image.open(req.raw), detections_to_visualize
+            img=Image.open(req.raw),
+            detections=detections_to_visualize,
+            ignored=ignored_to_visualize,
+            ignore=ignore_list,
         )
 
     if show:

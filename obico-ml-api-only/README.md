@@ -4,11 +4,18 @@ Spawn [Obico ML API](https://www.obico.io/docs/server-guides/) container without
 or any other Obico apps. This is for people that REALLY just want to have an API
 for image detections, which can be further scripted with other tools.
 
-Container image is from my modified app version - just extra debug messages and minor
-tweaks, AI model is as is. You can find git sha which was used for builds in
+Container image is from my modified app version:
+
+- extra debug messages
+- send more details to statsd
+- allow passing ignored zones to avoid false positives due to the areas in the
+  camera that contains problematic items (especially timestamps or some cables)
+
+The AI model is left as is. You can find git sha which was used for builds in
 [this repo](https://github.com/nvtkaszpir/obico-server/), the built images
 are pushed to [quay.io](https://quay.io/repository/kaszpir/ml_api?tab=tags)
-based on `<git-short-sha>-<arch>`.
+based on `<git-short-sha>-<arch>`. I mainly push to `dockerfile-cleanups` branch
+in there.
 
 ## Usage
 
@@ -19,6 +26,7 @@ spaghetti. Output from the API is in JSON.
 docker-compose up
 ```
 
+Notice that container image size is about 3GB.
 Docker compose up will spawn container which listens on port `3333`.
 
 In general Obico ML API needs to get `img` param which tells it to fetch image from
@@ -30,6 +38,8 @@ for example [esphome web server](https://esphome.io/components/esp32_camera_web_
 with `snapshot` mode will work.
 
 ### Install dependencies
+
+To run additional script `draw_detections.py` you may need some local dependencies:
 
 ```shell
 pip install -r requirements.txt
@@ -99,6 +109,49 @@ You will see only specific areas:
 
 - [out.json](./out-t04.json)
 - [out.jpg](./out-t04.jpg)
+
+### Pass on ignored regions
+
+add `--ignore="[json_table]"` to ignore certain regions.
+
+Imagine you have source image 800x600, then we want to exclude left half of
+the image. In normal coords this is (x=0,y=0 top left image corner)
+x=0, y=0, w=400, h=300
+but in the 'detections' format it needs to be encoded as `center of the box x`,
+`center of the box y`, `box width`, `box height`, so our coords are:
+(half, half, width, height)
+xc=200, y=150, w=400, h=300
+
+and for bound box with corners top_left=10,20, bottom_right=30,40
+it would be:
+xc=(30-10)/2
+yc=(40-20)/2
+w=30-10
+h=40-20
+
+Let say I have such regions to ignore:
+
+```json
+[
+  [320, 32, 640, 64], // top left corner with timestamp
+  [210, 600, 420, 1200], // left area with cables
+  [1500, 600, 200, 1200] // right are with cables
+]
+```
+
+The parameter passed is
+
+`[[320, 32, 640, 64],[210, 600, 420, 1200],[1500, 600, 200, 1200]]`
+
+So I can just run the command as:
+
+```shell
+python3 draw_detections.py \
+  --api http://obico-ml-api.intra.hlds.pl/ \
+  http://192.168.1.10:1880/camera/0461c8.jpg \
+  --show \
+  --ignore="[[320, 32, 640, 64],[210, 600, 420, 1200],[1500, 600, 200, 1200]]"
+```
 
 ### Other notes
 

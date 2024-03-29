@@ -5,7 +5,7 @@ services:
   obico-ml-api:
     hostname: ml_api
     container_name: obico_ml_api
-    image: quay.io/kaszpir/ml_api:35c0b218-amd64
+    image: quay.io/kaszpir/ml_api:812a05b7-amd64
     read_only: true
     tty: true
     # setting timeout to avoid queuing requests that will be dropped anyway
