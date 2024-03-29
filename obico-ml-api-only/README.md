@@ -46,6 +46,14 @@ pip install -r requirements.txt
 
 ```
 
+## Draw basic detecions
+
+![example](./example.png)
+
+(No the printer is not skewed, this is the effect of camera lens distortion because it is not perpendicular to the bed)
+
+Backward compatible behaviour.
+
 ### Draw detections with preview
 
 For pure example purposes replace `https://bagno.hlds.pl/obico/bad_1.jpg` with the url to the image from the camera.
@@ -68,8 +76,9 @@ DEBUG:urllib3.connectionpool:http://127.0.0.1:3333 "GET /p/?img=https%3A%2F%2Fba
 ```
 <!-- markdownlint-enable html line-length -->
 
-![example](./example.png)
-(No the printer is not skewed, this is the effect of camera lens distortion because it is not perpendicular to the bed)
+![example](./example_0461c8.png)
+
+With custom ignored areas.
 
 ### Draw detections without preview
 
@@ -84,7 +93,7 @@ python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obi
 and it should produce output such as:
 
 - [out.json](./out.json)
-- [out.jpg](./out.jpg)
+- ![out.jpg](./out.jpg)
 
 With additional options `--show-below-treshold`:
 <!-- markdownlint-disable html line-length -->
@@ -95,8 +104,8 @@ python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obi
 
 you should see blue areas that are below treshold:
 
-- [out.json](./out-below.json)
-- [out.jpg](./out-below.jpg)
+- [out-below.json](./out-below.json)
+- ![out-below.jpg](./out-below.jpg)
 
 With option `--treshold=0.4`:
 <!-- markdownlint-disable html line-length -->
@@ -107,8 +116,8 @@ python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obi
 
 You will see only specific areas:
 
-- [out.json](./out-t04.json)
-- [out.jpg](./out-t04.jpg)
+- [out-t04.json](./out-t04.json)
+- ![out-t04.jpg](./out-t04.jpg)
 
 ### Pass on ignored regions
 
