@@ -40,8 +40,8 @@ def threshold_to_color(threshold):
     return (255, 255, 255, 255)  # white
 
 
-def detection_to_box(coords):
-    """convert detection coords normal box coords"""
+def shape_points(coords):
+    """convert detection coords to points defining a shape"""
     (xc, yc, w, h) = map(int, coords)
     (x1, y1), (x2, y2) = (xc - w // 2, yc - h // 2), (xc + w // 2, yc + h // 2)
     points = (x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)
@@ -51,8 +51,8 @@ def detection_to_box(coords):
 
 def draw_coords(draw, coords, text, color=(128, 128, 128, 255), width=3, font_size=16):
     """draw coords on the draw object, in given color"""
-    points = detection_to_box(coords)
-    (x1, y1) = points[0]
+    points = shape_points(coords)
+    (x1, y1) = points[0]  # location where to write threshold info
 
     draw.line(points, fill=color, width=width)
     font = ImageFont.truetype("arial", font_size)
@@ -69,7 +69,7 @@ def overlay_detections(img, detections, ignored, ignore):
     for d in ignore:
         color = (0, 255, 255, 255)
         fill = (0, 255, 255, 32)
-        points = detection_to_box(d)
+        points = shape_points(d)
         shape = [points[0], points[2]]
         draw_coords(draw=draw, text="ignore", coords=d, color=color, width=3)
         draw.rectangle(xy=shape, fill=fill, width=1)
