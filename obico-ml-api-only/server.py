@@ -1,19 +1,27 @@
-import draw_detections
-import flask
+"""render detections from ml_api and return as image
+
+userful for calling via curl or other tools
+
+"""
 import io
+import flask
+import draw_detections
+
 
 application = flask.Flask(__name__)
 
 
 @application.route("/", methods=["GET"])
 def info():
-    info = "info.html"
-    return flask.send_file(info, mimetype="text/html")
+    """show usage as default page"""
+    filename = "info.html"
+    return flask.send_file(filename, mimetype="text/html")
 
 
 @application.route("/r/", methods=["GET"])
 def render():
-    """
+    """render detections and return as image
+
     img: url
     api: url
     ignore: json
@@ -45,6 +53,10 @@ def render():
 # healtchcheck and readiness endpoint
 @application.route("/ready", methods=["GET"])
 def health_check():
+    """app healch check
+
+    frankly speaking not much to return in here
+    """
     return "ok"
 
 
