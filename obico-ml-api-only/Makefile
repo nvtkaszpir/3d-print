@@ -7,7 +7,7 @@ help:
 	@grep -E '(^[0-9a-zA-Z_-]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
 version: ## show git version
-	@echo GIT_COMMIT IS $(GIT_COMMIT)
+	@echo GIT_COMMIT is $(GIT_COMMIT)
 
 lint-dockerfile: ## Runs hadolint against application dockerfile
 	docker run --rm -v "$(PWD):/data" -w "/data" hadolint/hadolint hadolint Dockerfile
