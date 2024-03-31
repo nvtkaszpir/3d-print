@@ -1,0 +1,26 @@
+<html>
+<head>
+  <meta charset='utf-8'>
+<body>
+Endpoint to render image: /r
+<br/>
+Accepted query: GET
+<br/>
+Accepted params:
+<br/>
+- api - URL to the ml_api (without /p at the end), for example 'http://0.0.0.0:3333/'
+<br/>
+- img - URL to the image to be processed by ml_api, directly passed to ml_api, for example camera image
+<br/>
+- ignore - detection ignore areas, directly passed to ml_api, should be a json list as string
+<br/>
+<br/>
+example command:
+<br/>
+<code>
+  <pre>
+    curl "http://127.0.0.1:8000/r/?api=http://obico-ml-api.intra.hlds.pl&img=http://192.168.1.10:1880/camera/0461c8.jpg&ignore=%5B%5B320%2C32%2C640%2C64%5D%2C%5B188%2C600%2C376%2C1200%5D%2C%5B1507%2C600%2C185%2C1200%5D%5D" --output /tmp/test.jpg
+  </pre>
+</code>
+</body>
+</html>

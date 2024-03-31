@@ -44,3 +44,34 @@ services:
       retries: 2
       start_period: 5s
       timeout: 2s
+
+  render:
+    image: quay.io/kaszpir/obico_render:0102296-amd64
+    read_only: true
+    tty: true
+    ports:
+      - "3334:3334"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 128M
+        reservations:
+          cpus: '1'
+          memory: 32M
+    environment:
+      TZ: "UTC/Etc"
+      DEBUG: "True"
+    volumes:
+      - type: tmpfs
+        target: /tmp
+        tmpfs:
+          size: 1G
+
+    restart: unless-stopped
+    healthcheck:
+      test: curl --fail http://localhost:3334/ready || exit 1
+      interval: 10s
+      retries: 2
+      start_period: 5s
+      timeout: 2s

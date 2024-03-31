@@ -4,12 +4,16 @@ Spawn [Obico ML API](https://www.obico.io/docs/server-guides/) container without
 or any other Obico apps. This is for people that REALLY just want to have an API
 for image detections, which can be further scripted with other tools.
 
+## Features
+
 Container image is from my modified app version:
 
 - extra debug messages
 - send more details to statsd
 - allow passing ignored zones to avoid false positives due to the areas in the
   camera that contains problematic items (especially timestamps or some cables)
+- draw_detections.py as CLI script to render detections on the image directly
+- server.py to make it a web app
 
 The AI model is left as is. You can find git sha which was used for builds in
 [this repo](https://github.com/nvtkaszpir/obico-server/), the built images
@@ -17,7 +21,7 @@ are pushed to [quay.io](https://quay.io/repository/kaszpir/ml_api?tab=tags)
 based on `<git-short-sha>-<arch>`. I mainly push to `dockerfile-cleanups` branch
 in there.
 
-## Usage
+## CLI Usage
 
 Just feed it with a param to fetch image to process if it is able to detect
 spaghetti. Output from the API is in JSON.
@@ -174,6 +178,33 @@ Color codes:
 
 Notice that ml_api is processing whole image, so my example image above with
 the date, can trigger false spaghetti detections :)
+
+## Webb app
+
+Web app allows to return image with rendered detections.
+Run `docker-compose up` and on port 3334 there is a app that does that.
+
+See [info.html](./info.html) for more details.
+
+Example:
+
+```shell
+curl  "http://127.0.0.1:3334/r/?api=http://ml_api:3333&img=http://bagno.hlds.pl/obico/bad_1.jpg&ignore=%5B%5B320%2C32%2C640%2C64%5D%2C%5B188%2C600%2C376%2C1200%5D%2C%5B1507%2C600%2C185%2C1200%5D%5D"
+```
+
+This way you can for example do detections in one api call and if there are
+detections you can do another call to different API to get them rendered on the image.
+
+Useful with node-red such as:
+
+- get image from camera and store it under specific path and name
+- send request to the ml_api for detections
+  (pass img url to the image stored earlier + ignore regions)
+- if there are detections then do api call to renderer
+  (pass img url to the image stored earlier + ignore regions + ml_api address)
+  get image with rendered detections
+- forward image further, for example push notifications/communicator as an attachment or embed
+  directly
 
 ## Example Node-RED flow
 
