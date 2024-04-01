@@ -46,7 +46,7 @@ services:
       timeout: 2s
 
   render:
-    image: quay.io/kaszpir/obico_render:8dd05d9-amd64
+    image: quay.io/kaszpir/obico_render:61cf663-amd64
     read_only: true
     tty: true
     ports:
