@@ -85,17 +85,20 @@ First I suggest to read [here](https://randomnerdtutorials.com/esp32-load-cell-h
 - in esphome dashboard find your device configuration and add the code above to the device,
   then flash esphome firmware, after a moment device should be back online
 - see if the tensor beam reacts to the changes - you just should be able to see raw values
-  in esphome dashboard logs or in Home Assistant
+  in esphome dashboard logs
+- import esp32 device to Home Assistant (usually you should get a notification about auto-discovery)
 - ensure tensor beam is not under load - write down the current raw value as `LOAD_ZERO`
 - place example known weight on the tensor beam, write down the raw value as `LOAD_KNOWN`, remove the weight,
   this will come in handy later on
 
-## HomeAssistant + Prometheus
+## HomeAssistant
 
 - prepare HomeAssistant to expose metrics - see [here](https://www.home-assistant.io/integrations/prometheus/),
   in HomeAssistant you need just `prometheus:` line section in the config and restart HomeAssistant
 
-- configure Prometheus to scrape the metrics - in case of Home Assistant you may need to add basic auth via API key,
+## Prometheus
+
+- configure Prometheus to scrape the metrics of the HomeAssistant - you may need to add basic auth via API key,
   below is example config fragment to use to copy/paste to Prometheus config:
 
   ```yaml
@@ -111,6 +114,8 @@ First I suggest to read [here](https://randomnerdtutorials.com/esp32-load-cell-h
   ```
 
   [full details here](https://www.home-assistant.io/integrations/prometheus/#full-example),
+
+- check prometheus web ui if HomeAssitant target is healthy and thus it scrapes metrics correctly.
 
 ## Grafana
 
