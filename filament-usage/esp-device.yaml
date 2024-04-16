@@ -1,0 +1,112 @@
+# drybox with weight and temperature/humidity sensor
+substitutions:
+  device_name: esp32-devkit-v4-9e8360
+  domain: !secret DOMAIN
+
+esphome:
+  name: esp32-devkit-v4-9e8360
+
+esp32:
+  board: esp32dev
+  # board: az-delivery-devkit-v4
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  logs:
+    component: ERROR
+
+# generic services
+time:
+  - platform: sntp
+    timezone: "Europe/Warsaw"
+    id: sntp_time
+    servers:
+      - pl.pool.ntp.org
+
+web_server:
+  port: 80
+# Expose prometheus metrics directly, enables web server
+prometheus:
+
+
+# Enable Home Assistant API, comment it to disable HomeAssistant integration
+# set password
+api:
+  password: !secret HA_PASSWORD
+  # reboot_timeout: 0s # disable reboot if not connected to HA
+
+# allow over the air firmware updates, change password
+ota:
+  password: !secret OTA_PASSWORD
+
+wifi:
+  ssid: !secret WIFI_SSID
+  password: !secret WIFI_PASSWORD
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${device_name}"
+    password: !secret WIFI_AP_PASSWORD
+
+captive_portal:
+
+# web ui info
+text_sensor:
+  - platform: version
+    name: "ESPHome Version ${device_name}"
+
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address ${device_name}"
+    ssid:
+      name: "Connected SSID ${device_name}"
+    bssid:
+      name: "Connected BSSID ${device_name}"
+    mac_address:
+      name: "Mac Wifi Address ${device_name}"
+
+  - platform: version
+    name: "ESPHome Version ${device_name}"
+  # - platform: template
+  #   name: "iBeacon uuid ${device_name}"
+  #   lambda: |-
+  #     return {"$ibeacon_uuid"};
+  #   update_interval: 60s
+
+# enable i2c for AHT20 temperature/humidity sensor
+i2c:
+  sda: 21
+  scl: 22
+  scan: true
+  id: bus_a
+
+# modules
+sensor:
+  - platform: uptime
+    id: socket_uptime
+    name: "Uptime"
+    icon: mdi:clock-outline
+    update_interval: 60s
+
+  - platform: wifi_signal
+    id: socket_wifi_signal
+    name: "WiFi Signal"
+    update_interval: 30s
+
+  # temperature/humidity sensor
+  - platform: aht10
+    temperature:
+      name: "${device_name} temperature"
+    humidity:
+      name: "${device_name} humidity"
+    update_interval: 60s
+
+  # spool weight - load cell / tensor beam
+  - platform: hx711
+    name: "${device_name} HX711 Value"
+    dout_pin: GPIO19
+    clk_pin: GPIO18
+    gain: 128
+    update_interval: 10s
