@@ -1,0 +1,656 @@
+[
+  {
+      "id": "7788472bdd9c4338",
+      "type": "tab",
+      "label": "Spagetti nodered",
+      "disabled": false,
+      "info": "",
+      "env": []
+  },
+  {
+      "id": "fcec64424592534e",
+      "type": "http request",
+      "z": "7788472bdd9c4338",
+      "name": "call ml_api",
+      "method": "GET",
+      "ret": "txt",
+      "paytoqs": "ignore",
+      "url": "http://obico-ml-api.intra.hlds.pl/p/?img=http://192.168.1.10:1880/camera/0461c8.jpg&ignore=%5B%5B320%2C32%2C640%2C64%5D%2C%5B188%2C600%2C376%2C1200%5D%2C%5B1507%2C600%2C185%2C1200%5D%5D",
+      "tls": "",
+      "persist": false,
+      "proxy": "",
+      "insecureHTTPParser": false,
+      "authType": "",
+      "senderr": false,
+      "headers": [],
+      "x": 610,
+      "y": 320,
+      "wires": [
+          [
+              "bb4a7db0cd2ca888"
+          ]
+      ]
+  },
+  {
+      "id": "b3254959a54177e5",
+      "type": "function",
+      "z": "7788472bdd9c4338",
+      "name": "Check Detections",
+      "func": "var failure_treshold = 0.2;\nvar detections = msg.payload.detections;\n\nvar confidence = 0.0;\nvar triggered = 0;\nfor(var i=0;i<detections.length;i++) {\n    var detection = detections[i];\n    var treshold = detection[1];\n    var coords = detection[2];\n    if (treshold > failure_treshold) {\n        triggered+=1;\n        if(treshold > confidence){\n            confidence = treshold;\n        }\n    }\n};\nvar failure = {};\nfailure.treshold = failure_treshold;\nfailure.triggered = triggered;\nfailure.confidence = confidence;\n\nmsg.failure = failure;\n\nreturn msg;",
+      "outputs": 1,
+      "timeout": 0,
+      "noerr": 0,
+      "initialize": "",
+      "finalize": "",
+      "libs": [],
+      "x": 930,
+      "y": 320,
+      "wires": [
+          [
+              "1ce68871814ea6f0"
+          ]
+      ]
+  },
+  {
+      "id": "bb4a7db0cd2ca888",
+      "type": "json",
+      "z": "7788472bdd9c4338",
+      "name": "",
+      "property": "payload",
+      "action": "",
+      "pretty": false,
+      "x": 770,
+      "y": 320,
+      "wires": [
+          [
+              "b3254959a54177e5"
+          ]
+      ]
+  },
+  {
+      "id": "473f2c897fd6142f",
+      "type": "excursion",
+      "z": "7788472bdd9c4338",
+      "name": "",
+      "time": "60",
+      "softmax": "0.2",
+      "softmin": "-0.5",
+      "hardmax": "0.4",
+      "hardmin": "-1",
+      "x": 1020,
+      "y": 420,
+      "wires": [
+          [
+              "8ff13c31eb7e6eec"
+          ]
+      ]
+  },
+  {
+      "id": "53681d3da7380f8a",
+      "type": "change",
+      "z": "7788472bdd9c4338",
+      "name": "",
+      "rules": [
+          {
+              "t": "set",
+              "p": "payload",
+              "pt": "msg",
+              "to": "failure.confidence",
+              "tot": "msg"
+          }
+      ],
+      "action": "",
+      "property": "",
+      "from": "",
+      "to": "",
+      "reg": false,
+      "x": 860,
+      "y": 420,
+      "wires": [
+          [
+              "473f2c897fd6142f"
+          ]
+      ]
+  },
+  {
+      "id": "a205578bb23ade83",
+      "type": "change",
+      "z": "7788472bdd9c4338",
+      "name": "privmsg _KaszpiR_",
+      "rules": [
+          {
+              "t": "set",
+              "p": "user",
+              "pt": "msg",
+              "to": "134968644248535040",
+              "tot": "str"
+          }
+      ],
+      "action": "",
+      "property": "",
+      "from": "",
+      "to": "",
+      "reg": false,
+      "x": 1770,
+      "y": 320,
+      "wires": [
+          [
+              "154160973a91c937",
+              "dc0734452f63d989"
+          ]
+      ]
+  },
+  {
+      "id": "154160973a91c937",
+      "type": "discordMessageManager",
+      "z": "7788472bdd9c4338",
+      "name": "send msg",
+      "channel": "",
+      "token": "",
+      "x": 1960,
+      "y": 320,
+      "wires": [
+          []
+      ]
+  },
+  {
+      "id": "3237c3393871bdd1",
+      "type": "http request",
+      "z": "7788472bdd9c4338",
+      "name": "Printer get status",
+      "method": "GET",
+      "ret": "obj",
+      "paytoqs": "ignore",
+      "url": "",
+      "tls": "",
+      "persist": false,
+      "proxy": "",
+      "insecureHTTPParser": false,
+      "authType": "",
+      "senderr": true,
+      "headers": [
+          {
+              "keyType": "other",
+              "keyValue": "X-Api-Key",
+              "valueType": "msg",
+              "valueValue": "api_key"
+          }
+      ],
+      "x": 730,
+      "y": 220,
+      "wires": [
+          [
+              "b502a13f4c1c1243"
+          ]
+      ],
+      "info": "Get printer status.\r\nIt assumes url points to the printer API\r\nwhich returns json object.\r\n\r\nIf you use different printer then you may need\r\nto adjust output.\r\n"
+  },
+  {
+      "id": "b502a13f4c1c1243",
+      "type": "switch",
+      "z": "7788472bdd9c4338",
+      "name": "is printing?",
+      "property": "payload.state.flags.printing",
+      "propertyType": "msg",
+      "rules": [
+          {
+              "t": "true"
+          },
+          {
+              "t": "false"
+          }
+      ],
+      "checkall": "true",
+      "repair": false,
+      "outputs": 2,
+      "x": 910,
+      "y": 220,
+      "wires": [
+          [
+              "99647fdbf07c8f84"
+          ],
+          [
+              "22653d772ea90b99"
+          ]
+      ],
+      "info": "Decide if printer is printing based on\r\nincoming message.\r\n\r\nIt assumes incoming payload is json object.\r\n\r\nSpecific condition is adjusted to Prusa Mini+\r\nwith firmware 4.4.1\r\n\r\nIf you use different printer then you may need\r\nto adjust the values accordingly.\r\n"
+  },
+  {
+      "id": "e08c0da9b1e4df1d",
+      "type": "function",
+      "z": "7788472bdd9c4338",
+      "name": "general config",
+      "func": "// see On Start tab\n// see description of the node for more\n",
+      "outputs": 1,
+      "noerr": 0,
+      "initialize": "// Code added here will be run once\n// whenever the node is started.\n\n// see description of the node for more\n\n// where to store screenshots and videos\n// date and print count will be saved underneath\n// do not add trailing slash\n// directory will be automatically created if does not exist\nvar save_path_root = \"/data/prusa/with_gcode\";\n\n// this is adjusted to Prusa Mini+ web API\nvar printer_api_address = \"http://192.168.1.25:80/api/printer\";\nvar printer_api_key = \"hgyJKWXmhvEaPnK\";\n\nvar esp32_camera_address = \"http://esp32-wrover-0461c8.intra.hlds.pl:8081\";\n\n// save flow vars\nflow.set('save_path_root', save_path_root);\nflow.set('printer_api_address', printer_api_address);\nflow.set('printer_api_key', printer_api_key);\nflow.set('esp32_camera_address', esp32_camera_address);\nmsg = { save_path_root: save_path_root };\nreturn msg;\n",
+      "finalize": "",
+      "libs": [],
+      "x": 120,
+      "y": 100,
+      "wires": [
+          []
+      ],
+      "info": "This node is used as generic config for the whole flow\r\n."
+  },
+  {
+      "id": "085d509254b392bd",
+      "type": "function",
+      "z": "7788472bdd9c4338",
+      "name": "generate url",
+      "func": "//get flow vars\n\n// this is adjusted to Prusa Mini+ web api\nvar url = flow.get(\"printer_api_address\");\nvar api_key = flow.get(\"printer_api_key\");\n\n// generate msg for http request\nvar msg = {\n    url: url,\n    api_key: api_key\n}\nreturn msg;",
+      "outputs": 1,
+      "noerr": 0,
+      "initialize": "",
+      "finalize": "",
+      "libs": [],
+      "x": 550,
+      "y": 220,
+      "wires": [
+          [
+              "3237c3393871bdd1"
+          ]
+      ],
+      "info": "Prepares values which are passed to http get node"
+  },
+  {
+      "id": "99647fdbf07c8f84",
+      "type": "function",
+      "z": "7788472bdd9c4338",
+      "name": "set gate to open",
+      "func": "var msg = {\n    payload: \"open\",\n    topic: \"control\",\n}\nflow.set('gate_open', true)\nreturn msg;",
+      "outputs": 1,
+      "noerr": 0,
+      "initialize": "",
+      "finalize": "",
+      "libs": [],
+      "x": 1140,
+      "y": 140,
+      "wires": [
+          [
+              "d925b475446a144c"
+          ]
+      ]
+  },
+  {
+      "id": "22653d772ea90b99",
+      "type": "function",
+      "z": "7788472bdd9c4338",
+      "name": "set gate to close",
+      "func": "var msg = {\n    payload: \"close\",\n    topic: \"control\",\n}\nflow.set('gate_open', false)\nreturn msg;",
+      "outputs": 1,
+      "noerr": 0,
+      "initialize": "",
+      "finalize": "",
+      "libs": [],
+      "x": 1140,
+      "y": 200,
+      "wires": [
+          [
+              "d925b475446a144c"
+          ]
+      ]
+  },
+  {
+      "id": "d925b475446a144c",
+      "type": "delay",
+      "z": "7788472bdd9c4338",
+      "name": "delay 5c",
+      "pauseType": "delay",
+      "timeout": "5",
+      "timeoutUnits": "seconds",
+      "rate": "1",
+      "nbRateUnits": "1",
+      "rateUnits": "second",
+      "randomFirst": "1",
+      "randomLast": "5",
+      "randomUnits": "seconds",
+      "drop": false,
+      "allowrate": false,
+      "outputs": 1,
+      "x": 1340,
+      "y": 200,
+      "wires": [
+          [
+              "31ca0b9c833ab77f"
+          ]
+      ],
+      "info": "must be higher than\r\ndelay gate control + trigger to render video\r\n"
+  },
+  {
+      "id": "31ca0b9c833ab77f",
+      "type": "gate",
+      "z": "7788472bdd9c4338",
+      "name": "gate: send to discord",
+      "controlTopic": "control",
+      "defaultState": "closed",
+      "openCmd": "open",
+      "closeCmd": "close",
+      "toggleCmd": "toggle",
+      "defaultCmd": "default",
+      "statusCmd": "status",
+      "persist": false,
+      "storeName": "memory",
+      "x": 1560,
+      "y": 320,
+      "wires": [
+          [
+              "a205578bb23ade83"
+          ]
+      ]
+  },
+  {
+      "id": "0d34c39673496c84",
+      "type": "mqtt in",
+      "z": "7788472bdd9c4338",
+      "d": true,
+      "name": "cam button",
+      "topic": "esp32-wrover-0461c8/binary_sensor/button_black/state",
+      "qos": "2",
+      "datatype": "auto-detect",
+      "broker": "9e395dd3a06b4661",
+      "nl": false,
+      "rap": true,
+      "rh": 0,
+      "inputs": 0,
+      "x": 60,
+      "y": 320,
+      "wires": [
+          [
+              "d98006b6aa17f703"
+          ]
+      ]
+  },
+  {
+      "id": "d98006b6aa17f703",
+      "type": "switch",
+      "z": "7788472bdd9c4338",
+      "name": "",
+      "property": "payload",
+      "propertyType": "msg",
+      "rules": [
+          {
+              "t": "eq",
+              "v": "ON",
+              "vt": "str"
+          }
+      ],
+      "checkall": "true",
+      "repair": false,
+      "outputs": 1,
+      "x": 190,
+      "y": 320,
+      "wires": [
+          [
+              "790fff8b05ba8439"
+          ]
+      ]
+  },
+  {
+      "id": "2ab4370e749f3129",
+      "type": "image",
+      "z": "7788472bdd9c4338",
+      "name": "",
+      "width": "640",
+      "data": "payload",
+      "dataType": "msg",
+      "thumbnail": false,
+      "active": true,
+      "pass": true,
+      "outputs": 1,
+      "x": 700,
+      "y": 520,
+      "wires": [
+          [
+              "689cd5a099b1d2e1"
+          ]
+      ]
+  },
+  {
+      "id": "d1a37faff901c6ee",
+      "type": "http request",
+      "z": "7788472bdd9c4338",
+      "name": "node-red-camera-image",
+      "method": "GET",
+      "ret": "bin",
+      "paytoqs": "ignore",
+      "url": "http://obico-render.intra.hlds.pl/r/?api=http://ml-api.obico-ml-api:3333/&img=http://192.168.1.10:1880/camera/0461c8.jpg&ignore=%5B%5B320%2C32%2C640%2C64%5D%2C%5B188%2C600%2C376%2C1200%5D%2C%5B1507%2C600%2C185%2C1200%5D%5D",
+      "tls": "",
+      "persist": false,
+      "proxy": "",
+      "insecureHTTPParser": false,
+      "authType": "",
+      "senderr": false,
+      "headers": [],
+      "x": 490,
+      "y": 520,
+      "wires": [
+          [
+              "2ab4370e749f3129"
+          ]
+      ]
+  },
+  {
+      "id": "43012ad402c6219e",
+      "type": "inject",
+      "z": "7788472bdd9c4338",
+      "name": "",
+      "props": [
+          {
+              "p": "payload"
+          },
+          {
+              "p": "topic",
+              "vt": "str"
+          }
+      ],
+      "repeat": "",
+      "crontab": "",
+      "once": false,
+      "onceDelay": 0.1,
+      "topic": "",
+      "payload": "",
+      "payloadType": "date",
+      "x": 180,
+      "y": 380,
+      "wires": [
+          [
+              "790fff8b05ba8439"
+          ]
+      ]
+  },
+  {
+      "id": "10ef186c779d829a",
+      "type": "link in",
+      "z": "7788472bdd9c4338",
+      "name": "link in obico",
+      "links": [
+          "56a33803eaaa418f"
+      ],
+      "x": 225,
+      "y": 260,
+      "wires": [
+          [
+              "41776f339e9dfa4c",
+              "790fff8b05ba8439"
+          ]
+      ]
+  },
+  {
+      "id": "41776f339e9dfa4c",
+      "type": "debug",
+      "z": "7788472bdd9c4338",
+      "name": "debumg incoming msg from another flow",
+      "active": false,
+      "tosidebar": true,
+      "console": false,
+      "tostatus": false,
+      "complete": "true",
+      "targetType": "full",
+      "statusVal": "",
+      "statusType": "auto",
+      "x": 440,
+      "y": 160,
+      "wires": []
+  },
+  {
+      "id": "790fff8b05ba8439",
+      "type": "function",
+      "z": "7788472bdd9c4338",
+      "name": "leave only payload",
+      "func": "var new_msg = {\n    \"payload\": msg.payload\n}\n\nreturn new_msg;",
+      "outputs": 1,
+      "timeout": 0,
+      "noerr": 0,
+      "initialize": "",
+      "finalize": "",
+      "libs": [],
+      "x": 390,
+      "y": 320,
+      "wires": [
+          [
+              "085d509254b392bd",
+              "fcec64424592534e",
+              "d1a37faff901c6ee"
+          ]
+      ]
+  },
+  {
+      "id": "689cd5a099b1d2e1",
+      "type": "function",
+      "z": "7788472bdd9c4338",
+      "name": "disord image embed",
+      "func": "msg.embed = {\n    \"title\": `Detections`,\n      \"description\": `Detections preview`,\n      \"color\": 0x00FFFF,\n      \"fields\": [\n      ],\n      \"image\": {\n        \"url\": \"attachment://detections.jpg\"\n      }\n};\nmsg.attachments = { buffer: msg.payload, name: \"detections.jpg\"};\ndelete(msg.payload);\nreturn msg;",
+      "outputs": 1,
+      "timeout": 0,
+      "noerr": 0,
+      "initialize": "",
+      "finalize": "",
+      "libs": [],
+      "x": 900,
+      "y": 520,
+      "wires": [
+          [
+              "1ce68871814ea6f0"
+          ]
+      ]
+  },
+  {
+      "id": "1ce68871814ea6f0",
+      "type": "join",
+      "z": "7788472bdd9c4338",
+      "name": "",
+      "mode": "custom",
+      "build": "merged",
+      "property": "",
+      "propertyType": "full",
+      "key": "topic",
+      "joiner": "\\n",
+      "joinerType": "str",
+      "accumulate": false,
+      "timeout": "",
+      "count": "9",
+      "reduceRight": false,
+      "reduceExp": "",
+      "reduceInit": "",
+      "reduceInitType": "num",
+      "reduceFixup": "",
+      "x": 690,
+      "y": 420,
+      "wires": [
+          [
+              "53681d3da7380f8a"
+          ]
+      ],
+      "info": "we need 9 elements in the whole object\nto generate a message\nso if you add more custom fiends\nthen bump the number in here"
+  },
+  {
+      "id": "51582451936abfef",
+      "type": "delay",
+      "z": "7788472bdd9c4338",
+      "name": "",
+      "pauseType": "rate",
+      "timeout": "5",
+      "timeoutUnits": "seconds",
+      "rate": "1",
+      "nbRateUnits": "1",
+      "rateUnits": "minute",
+      "randomFirst": "1",
+      "randomLast": "5",
+      "randomUnits": "seconds",
+      "drop": false,
+      "allowrate": false,
+      "outputs": 1,
+      "x": 1330,
+      "y": 420,
+      "wires": [
+          [
+              "31ca0b9c833ab77f"
+          ]
+      ]
+  },
+  {
+      "id": "dc0734452f63d989",
+      "type": "debug",
+      "z": "7788472bdd9c4338",
+      "name": "debumg message to discord",
+      "active": true,
+      "tosidebar": true,
+      "console": false,
+      "tostatus": false,
+      "complete": "true",
+      "targetType": "full",
+      "statusVal": "",
+      "statusType": "auto",
+      "x": 2020,
+      "y": 380,
+      "wires": []
+  },
+  {
+      "id": "8ff13c31eb7e6eec",
+      "type": "function",
+      "z": "7788472bdd9c4338",
+      "name": "format msg",
+      "func": "var messages = [];\n\nmessages.push(\"**Check 3D Printer!**\");\nmessages.push(\"Failure max confidence: \" + msg.failure.confidence);\nmessages.push(\"Failure triggered: \" + msg.failure.triggered);\nmsg.payload = messages.join('\\n')\n\nreturn msg;",
+      "outputs": 1,
+      "timeout": 0,
+      "noerr": 0,
+      "initialize": "",
+      "finalize": "",
+      "libs": [],
+      "x": 1170,
+      "y": 420,
+      "wires": [
+          [
+              "51582451936abfef"
+          ]
+      ]
+  },
+  {
+      "id": "9e395dd3a06b4661",
+      "type": "mqtt-broker",
+      "name": "bagno",
+      "broker": "bagno.intra.hlds.pl",
+      "port": "1883",
+      "clientid": "",
+      "autoConnect": true,
+      "usetls": false,
+      "protocolVersion": "5",
+      "keepalive": "60",
+      "cleansession": true,
+      "birthTopic": "",
+      "birthQos": "0",
+      "birthPayload": "",
+      "birthMsg": {},
+      "closeTopic": "",
+      "closeQos": "0",
+      "closePayload": "",
+      "closeMsg": {},
+      "willTopic": "",
+      "willQos": "0",
+      "willPayload": "",
+      "willMsg": {},
+      "userProps": "",
+      "sessionExpiry": ""
+  }
+]
