@@ -45,6 +45,8 @@ services:
       start_period: 5s
       timeout: 2s
 
+  # send request to it and it will call to obio_ml api and camera,
+  # fetch results and return image with rendered boxes
   render:
     image: quay.io/kaszpir/obico_render:61cf663-amd64
     read_only: true
