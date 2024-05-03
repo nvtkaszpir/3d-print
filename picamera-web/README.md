@@ -92,7 +92,7 @@ gunicorn  --backlog 3 --keep-alive 5 --bind 0.0.0.0:8090 --workers 1 app
 
 ```shell
 # get image directly from raspberry pi
-curl http://0.0.0.0:8080/info
+curl http://0.0.0.0:8090/info
 ```
 
 Use this to set other env vars if needed
@@ -103,21 +103,21 @@ Use this to set other env vars if needed
 
 ```shell
 # get image directly from raspberry pi
-curl http://0.0.0.0:8080/ -o image.jpg
+curl http://0.0.0.0:8090/ -o image.jpg
 ```
 
 ### Use with Obico
 
-Assuming 192.168.1.50 is the IP address of the raspberry pi then
-you should be able to use `http://192.168.1.50:8080/` as a camera snapshot with
+Assuming `192.168.1.50` is the IP address of the raspberry pi then
+you should be able to use `http://192.168.1.50:8090/` as a camera snapshot with
 Obico.
 
 ### Obico ml-api standalone
 
-Use [obico-ml-api-only](../obico-ml-api-only/) to get the image from `http://192.168.1.50:8080/`
+Use [obico-ml-api-only](../obico-ml-api-only/) to get the image from `http://192.168.1.50:8090/`
 
 ```shell
-python3 draw_detections.py --api http://127.0.0.1:3333 http://192.168.1.50:8080/ --show
+python3 draw_detections.py --api http://127.0.0.1:3333 http://192.168.1.50:8090/ --show
 ```
 
 Yeah this was the real reason this code was created :D
