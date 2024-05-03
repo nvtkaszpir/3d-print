@@ -22,7 +22,7 @@ cpu_usage,INTEGER,src/common/appmain.cpp
 crash,CUSTOM,lib/Marlin/Marlin/src/feature/prusa/crash_recovery.cpp
 crash_length,CUSTOM,src/common/marlin_server.cpp
 crash_repeated,EVENT,lib/Marlin/Marlin/src/feature/prusa/crash_recovery.cpp
-crash_stat,CUSTOM,lib/Marlin/Marlin/src/feature/prusa/crash_recovery.cpp
+crash_stat,CUSTOM,lib/Marlin/Marlin/src/feature/prusa/crash_recovery_counters.cpp
 cur_mmu_imp,FLOAT,src/common/app_metrics.cpp
 curr_inp,FLOAT,src/common/app_metrics.cpp
 curr_inp_raw,INTEGER,src/common/app_metrics.cpp
@@ -31,6 +31,7 @@ curr_nozz_raw,INTEGER,src/common/app_metrics.cpp
 dwarf_board_temp,INTEGER,src/common/app_metrics.cpp
 dwarf_fast_refresh_delay,INTEGER,src/puppies/Dwarf.cpp
 dwarf_heat_curr,CUSTOM,src/puppies/Dwarf.cpp
+dwarf_heat_pwm,CUSTOM,src/puppies/Dwarf.cpp
 dwarf_mcu_temp,INTEGER,src/common/app_metrics.cpp
 dwarf_parked_raw,CUSTOM,src/puppies/Dwarf.cpp
 dwarf_picked_raw,CUSTOM,src/puppies/Dwarf.cpp
@@ -60,6 +61,7 @@ g425_z,CUSTOM,src/marlin_stubs/G425.cpp
 gcode,STRING,src/marlin_stubs/gcode.cpp
 gui_loop_dur,INTEGER,src/gui/gui_time.cpp
 hbr_fan_act,INTEGER,src/common/fanctl/CFanCtlCommon.cpp
+hbr_fan_enc,INTEGER,src/common/fanctl/CFanCtlCommon.cpp
 heap,CUSTOM,doc/metrics.md
 heap,CUSTOM,src/common/app_metrics.cpp
 heap_free,INTEGER,doc/metrics.md
@@ -84,6 +86,7 @@ loadcell_xy,FLOAT,src/common/loadcell.cpp
 maintask_loop,EVENT,src/common/appmain.cpp
 media_prefetched,INTEGER,src/common/media.cpp
 mmu_comm,STRING,src/mmu2/mmu2_log.cpp
+mmu_unl_fs_trg_dist,FLOAT,lib/Marlin/Marlin/src/feature/prusa/MMU2/mmu2_mk4.cpp
 modbus_reqfail,EVENT,src/puppies/PuppyModbus.cpp
 nozzle_pwm,INTEGER,src/common/hwio_buddy_2209_02.cpp
 oc_inp,INTEGER,src/common/app_metrics.cpp
@@ -127,6 +130,8 @@ tmc_sg_x,INTEGER,src/common/thread_measurement.cpp
 tmc_sg_y,INTEGER,src/common/thread_measurement.cpp
 tmc_sg_z,INTEGER,src/common/thread_measurement.cpp
 tmc_write,CUSTOM,src/common/trinamic.cpp
+touch_evt,STRING,src/hw/touchscreen/touchscreen_common.cpp
+touch_pos,CUSTOM,src/hw/touchscreen/touchscreen_common.cpp
 ttemp_bed,INTEGER,src/common/app_metrics.cpp
 ttemp_noz,CUSTOM,src/common/app_metrics.cpp
 usbh_err_cnt,INTEGER,src/common/media.cpp
@@ -136,4 +141,4 @@ volt_bed_raw,INTEGER,src/common/app_metrics.cpp
 volt_nozz,FLOAT,src/common/app_metrics.cpp
 volt_nozz_raw,INTEGER,src/common/app_metrics.cpp
 xlbuddy5VCurrent,FLOAT,src/common/app_metrics.cpp
-# generated at Sat 16 Mar 23:20:48 UTC 2024,# PrusaFirmwareBuddy commit=98154870dc03b651243b5017584bb91559126ae9,# script source https://github.com/nvtkaszpir/3d-print
+# generated at Fri  3 May 20:42:10 UTC 2024,# PrusaFirmwareBuddy commit=f69118723a41ecef761be9df96205b9cf4571331,# script source https://github.com/nvtkaszpir/3d-print

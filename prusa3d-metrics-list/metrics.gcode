@@ -1,4 +1,4 @@
-;generated at Sat 16 Mar 23:20:48 UTC 2024, PrusaFirmwareBuddy commit=98154870dc03b651243b5017584bb91559126ae9, script source https://github.com/nvtkaszpir/3d-print
+;generated at Fri  3 May 20:42:10 UTC 2024, PrusaFirmwareBuddy commit=f69118723a41ecef761be9df96205b9cf4571331, script source https://github.com/nvtkaszpir/3d-print
 M331 24VVoltage ;metric type FLOAT - src/common/app_metrics.cpp
 M331 5VVoltage ;metric type FLOAT - src/common/app_metrics.cpp
 M331 active_extruder ;metric type INTEGER - src/common/app_metrics.cpp
@@ -22,7 +22,7 @@ M331 cpu_usage ;metric type INTEGER - src/common/appmain.cpp
 M331 crash_length ;metric type CUSTOM - src/common/marlin_server.cpp
 M331 crash ;metric type CUSTOM - lib/Marlin/Marlin/src/feature/prusa/crash_recovery.cpp
 M331 crash_repeated ;metric type EVENT - lib/Marlin/Marlin/src/feature/prusa/crash_recovery.cpp
-M331 crash_stat ;metric type CUSTOM - lib/Marlin/Marlin/src/feature/prusa/crash_recovery.cpp
+M331 crash_stat ;metric type CUSTOM - lib/Marlin/Marlin/src/feature/prusa/crash_recovery_counters.cpp
 M331 cur_mmu_imp ;metric type FLOAT - src/common/app_metrics.cpp
 M331 curr_inp ;metric type FLOAT - src/common/app_metrics.cpp
 M331 curr_inp_raw ;metric type INTEGER - src/common/app_metrics.cpp
@@ -31,6 +31,7 @@ M331 curr_nozz_raw ;metric type INTEGER - src/common/app_metrics.cpp
 M331 dwarf_board_temp ;metric type INTEGER - src/common/app_metrics.cpp
 M331 dwarf_fast_refresh_delay ;metric type INTEGER - src/puppies/Dwarf.cpp
 M331 dwarf_heat_curr ;metric type CUSTOM - src/puppies/Dwarf.cpp
+M331 dwarf_heat_pwm ;metric type CUSTOM - src/puppies/Dwarf.cpp
 M331 dwarf_mcu_temp ;metric type INTEGER - src/common/app_metrics.cpp
 M331 dwarf_parked_raw ;metric type CUSTOM - src/puppies/Dwarf.cpp
 M331 dwarf_picked_raw ;metric type CUSTOM - src/puppies/Dwarf.cpp
@@ -60,6 +61,7 @@ M331 g425_z ;metric type CUSTOM - src/marlin_stubs/G425.cpp
 M331 gcode ;metric type STRING - src/marlin_stubs/gcode.cpp
 M331 gui_loop_dur ;metric type INTEGER - src/gui/gui_time.cpp
 M331 hbr_fan_act ;metric type INTEGER - src/common/fanctl/CFanCtlCommon.cpp
+M331 hbr_fan_enc ;metric type INTEGER - src/common/fanctl/CFanCtlCommon.cpp
 M331 heap_free ;metric type INTEGER - doc/metrics.md
 M331 heap ;metric type CUSTOM - doc/metrics.md
 M331 heap ;metric type CUSTOM - src/common/app_metrics.cpp
@@ -84,6 +86,7 @@ M331 loadcell_xy ;metric type FLOAT - src/common/loadcell.cpp
 M331 maintask_loop ;metric type EVENT - src/common/appmain.cpp
 M331 media_prefetched ;metric type INTEGER - src/common/media.cpp
 M331 mmu_comm ;metric type STRING - src/mmu2/mmu2_log.cpp
+M331 mmu_unl_fs_trg_dist ;metric type FLOAT - lib/Marlin/Marlin/src/feature/prusa/MMU2/mmu2_mk4.cpp
 M331 modbus_reqfail ;metric type EVENT - src/puppies/PuppyModbus.cpp
 M331 nozzle_pwm ;metric type INTEGER - src/common/hwio_buddy_2209_02.cpp
 M331 oc_inp ;metric type INTEGER - src/common/app_metrics.cpp
@@ -127,6 +130,8 @@ M331 tmc_sg_x ;metric type INTEGER - src/common/thread_measurement.cpp
 M331 tmc_sg_y ;metric type INTEGER - src/common/thread_measurement.cpp
 M331 tmc_sg_z ;metric type INTEGER - src/common/thread_measurement.cpp
 M331 tmc_write ;metric type CUSTOM - src/common/trinamic.cpp
+M331 touch_evt ;metric type STRING - src/hw/touchscreen/touchscreen_common.cpp
+M331 touch_pos ;metric type CUSTOM - src/hw/touchscreen/touchscreen_common.cpp
 M331 ttemp_bed ;metric type INTEGER - src/common/app_metrics.cpp
 M331 ttemp_noz ;metric type CUSTOM - src/common/app_metrics.cpp
 M331 usbh_err_cnt ;metric type INTEGER - src/common/media.cpp
