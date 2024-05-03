@@ -19,8 +19,6 @@ import flask
 from picamera2 import Picamera2
 from libcamera import Transform
 
-logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
-
 # camera controls, should be a dict
 controls = {}
 CAMERA_INSTANCE = int(os.getenv("CAMERA_INSTANCE", default="0"))
@@ -50,12 +48,20 @@ logging.debug(f"cam_controls={cam_controls}")
 CAMERA_CONTROLS = json.loads(cam_controls.strip())
 logging.debug(f"CAMERA_CONTROLS={CAMERA_CONTROLS}")
 
+TUNING = os.getenv("TUNING", default="")
+logging.debug(f"TUNING={TUNING}")
 
 application = flask.Flask(__name__)
 application.config["SEND_FILE_MAX_AGE_DEFAULT"] = 1
 application.config["PROPAGATE_EXCEPTIONS"] = True
 
-picam2 = Picamera2(CAMERA_INSTANCE)
+if TUNING:
+    tuning = Picamera2.load_tuning_file(TUNING)
+else:
+    tuning = None
+
+
+picam2 = Picamera2(CAMERA_INSTANCE, tuning=tuning)
 
 # configure camera
 config = picam2.create_still_configuration(
@@ -77,9 +83,7 @@ def snapshot():
     try:
         picam2.start()
         time.sleep(SLEEP_TIME)
-        metadata = picam2.capture_file(SNAP_FILE)
-        logging.debug(metadata)
-        # picam2.stop()
+        picam2.capture_file(SNAP_FILE)
 
         return flask.send_file(
             SNAP_FILE,
@@ -99,6 +103,21 @@ def info():
         "camera_properties": picam2.camera_properties,
     }
     return pprint.pformat(msg)
+
+
+@application.route("/healthz")
+def healthz():
+    """Check if camera is available
+
+    using metadata checks if the camera connection is okay wihtout making image capture
+
+    """
+    try:
+        picam2.start()
+        picam2.capture_metadata()
+        return "ok"
+    except Exception:
+        flask.abort(500)
 
 
 if __name__ == "__main__":

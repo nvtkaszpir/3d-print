@@ -80,6 +80,11 @@ Configuration is via environmental variables.
   default "{}"
   this is pretty experimental and ugly and probably broken :D
 
+- `TUNING` - tuning color profile, for example to adjust colors on NOIR cameras
+  (the ones without infrared filter), see /usr/share/libcamera/ipa/rpi/ for
+  example json files, default is "", example `TUNING=ov5647_noir.json`,
+  notice this option will severely spam logs if debug is enabled
+
 ## Running
 
 Use `gunicorn`, because `werkzeug` tend to hang after few concurrent requests.

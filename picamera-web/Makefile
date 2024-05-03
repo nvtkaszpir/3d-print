@@ -35,7 +35,7 @@ uninstall: ## uninstall systemd service
 
 web: ## run web server directly
 	SLEEP_TIME=1 \
-	gunicorn --reload --backlog 3 --keep-alive 5 --bind 0.0.0.0:8090 --workers 1 app
+	gunicorn --disable-redirect-access-to-syslog --error-logfile - --access-logfile - --reload --bind 0.0.0.0:8090 --workers 1 app
 
 web_hromex: ## run web server directly
 	SLEEP_TIME=1 \
@@ -43,7 +43,8 @@ web_hromex: ## run web server directly
 	IMAGE_Y=1080 \
 	IMAGE_HFLIP=True \
 	IMAGE_VFLIP=True \
-	gunicorn --reload --backlog 3 --keep-alive 5 --bind 0.0.0.0:8090 --workers 1 app
+	TUNING=ov5647_noir.json \
+	gunicorn --disable-redirect-access-to-syslog --error-logfile - --access-logfile - --reload --bind 0.0.0.0:8090 --workers 1 app
 
 web_extra: ## run web server directly with extra params
 	SLEEP_TIME=2 \
@@ -51,7 +52,7 @@ web_extra: ## run web server directly with extra params
 	IMAGE_Y=1080 \
 	IMAGE_HFLIP=True \
 	IMAGE_VFLIP=True \
-	gunicorn --reload --backlog 3 --keep-alive 5 --bind 0.0.0.0:8090 --workers 1 app
+	gunicorn --disable-redirect-access-to-syslog --error-logfile - --access-logfile - --reload --bind 0.0.0.0:8090 --workers 1 app
 
 web_nodelay: ## run web server directly with extra params
 	SLEEP_TIME=0 \
@@ -59,7 +60,7 @@ web_nodelay: ## run web server directly with extra params
 	IMAGE_Y=1080 \
 	IMAGE_HFLIP=True \
 	IMAGE_VFLIP=True \
-	gunicorn --reload --backlog 3 --keep-alive 5 --bind 0.0.0.0:8090 --workers 1 app
+	gunicorn --disable-redirect-access-to-syslog --error-logfile - --access-logfile - --reload --bind 0.0.0.0:8090 --workers 1 app
 
 rsync: ## rsync files to my rpi4
 	rsync -av . pi@hormex:src/3d-print/picamera-web/
