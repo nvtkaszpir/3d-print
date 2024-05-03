@@ -6,6 +6,11 @@ Use at your own risk.
 
 ## List of things per directory
 
+- [filament usage](filament-usage/README.md)
+  grafana dashboard about filament usage by using esp32 + load cell
+
+  ![filament usage](filament-usage/grafana.png)
+
 - [Linux thumbnails](linux-thumbnails/README.md)
   generate thumbnails for file managers such as Thunar (XFCE4)
 
@@ -16,6 +21,14 @@ Use at your own risk.
   Also script to draw detections on images.
 
   ![example small](./obico-ml-api-only/example_small.png)
+
+- [picamera-web](picamera-web/README.md)
+  python picamera2 exposed via web (gunicorn)
+
+  `rpi csi  camera <-- python --> gunicorn --> web clients`
+
+  allows to access Raspberry Pi CSI cameras as snapshots via web url
+  nicely integrates with [obico-ml-api-only](./obico-ml-api-only/README.md)
 
 - [prusa-connect-proxy](prusa-connect-proxy/README.md)
   run Prusa printer through HTTP proxy and capture whatever it does!
