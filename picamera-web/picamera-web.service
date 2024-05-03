@@ -1,0 +1,21 @@
+# systemd unit
+
+[Unit]
+Description=Raspberry Pi Camera web
+
+[Service]
+Type=simple
+Environment=IMAGE_X=1920
+Environment=IMAGE_Y=1080
+Environment=IMAGE_HFLIP=True
+Environment=IMAGE_VFLIP=True
+WorkingDirectory=/home/pi/src/3d-print/picamera-web
+ExecStart=gunicorn --backlog 3 --keep-alive 5 --bind 0.0.0.0:8090 --workers 1 app
+Restart=always
+RestartSec=15
+User=pi
+Group=video
+SyslogIdentifier=picamera-web
+
+[Install]
+WantedBy=multi-user.target
