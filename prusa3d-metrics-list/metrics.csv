@@ -141,4 +141,4 @@ volt_bed_raw,INTEGER,src/common/app_metrics.cpp
 volt_nozz,FLOAT,src/common/app_metrics.cpp
 volt_nozz_raw,INTEGER,src/common/app_metrics.cpp
 xlbuddy5VCurrent,FLOAT,src/common/app_metrics.cpp
-# generated at Fri  3 May 20:42:10 UTC 2024,# PrusaFirmwareBuddy commit=f69118723a41ecef761be9df96205b9cf4571331,# script source https://github.com/nvtkaszpir/3d-print
+# generated at Sat 25 May 12:47:12 UTC 2024,# PrusaFirmwareBuddy commit=991dd60247e0ee34ec3866558de6c3b46b124338,# script source https://github.com/nvtkaszpir/3d-print
