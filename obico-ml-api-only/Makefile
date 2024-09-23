@@ -1,5 +1,7 @@
 GIT_COMMIT := $(shell git rev-parse --short HEAD)
 GIT_SOURCE := $(shell git config --get remote.origin.url)
+BASE_IMAGE := docker.io/library/python:3.12.6-slim-bookworm
+BASE_DIGEST := sha256:15bad989b293be1dd5eb26a87ecacadaee1559f98e29f02bf6d00c8d86129f39
 QUAY_REPO_USER ?= kaszpir
 QUAY_REPO_NAME ?= obico_render
 
@@ -22,6 +24,8 @@ obico_render_amd64: ## build docker image
 	docker buildx build --load \
 		--platform=linux/${ARCH} \
 		-t obico_render:${GIT_COMMIT}-${ARCH} \
+		--build-arg BASE_IMAGE=${BASE_IMAGE} \
+		--build-arg BASE_DIGEST=${BASE_DIGEST} \
 		--build-arg GIT_COMMIT=${GIT_COMMIT} \
 		--build-arg GIT_SOURCE=${GIT_SOURCE} \
 		--build-arg BASE_TAG=${GIT_COMMIT}-${ARCH} \
