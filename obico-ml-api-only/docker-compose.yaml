@@ -48,7 +48,7 @@ services:
   # send request to it and it will call to obio_ml api and camera,
   # fetch results and return image with rendered boxes
   render:
-    image: quay.io/kaszpir/obico_render:19e36f1-amd64
+    image: quay.io/kaszpir/obico_render:6683491-amd64
     read_only: true
     tty: true
     ports:
