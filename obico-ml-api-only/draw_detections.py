@@ -1,13 +1,12 @@
 """Do a API call to obico ml api and draw boxes with detections
 
 """
-import click
 import json
-import requests
 import logging
-from urllib.request import urlopen
+
+import click
+import requests
 from PIL import Image, ImageDraw, ImageFile, ImageFont
-import json
 
 logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
 
@@ -62,6 +61,7 @@ def shape_points(coords):
     return points
 
 
+# pylint: disable=too-many-arguments, too-many-positional-arguments
 def draw_coords(
     draw: ImageDraw,
     coords,
@@ -92,7 +92,7 @@ def draw_coords(
     font = ImageFont.truetype("FreeMono", font_size)
     draw.text((x1 + width, y1 + width), text, font=font)
 
-    logging.debug(f"draw coords={coords} text={text} color={color}")
+    logging.debug("draw coords=%s text=%s color=%s", coords, text, color)
 
 
 def overlay_detections(img, detections, ignored, ignore):
@@ -102,7 +102,8 @@ def overlay_detections(img, detections, ignored, ignore):
         img(file): source image, to be used as background
         detections(list): list of detections from obico ml_api
         ignored(list): list of ignored detections from obico ml_ali
-        ignore(list): list of areas which are ignored with detections, this is the same as passed to obico ml_api
+        ignore(list): list of areas which are ignored with detections,
+            this is the same as passed to obico ml_api
 
     """
     draw = ImageDraw.Draw(img, "RGBA")
@@ -120,14 +121,14 @@ def overlay_detections(img, detections, ignored, ignore):
     for d in ignored:
         threshold = d[1]
         color = threshold_to_color(0.0)
-        text = "{:.3f}".format(threshold)
-        draw_coords(draw=draw, text=text, coords=d[2], color=color, width=3)
+        text = f"{threshold:.3f}"
+        draw_coords(draw=draw, text={text}, coords=d[2], color=color, width=3)
 
     # draw detections
     for d in detections:
         threshold = d[1]
         color = threshold_to_color(threshold)
-        text = "{:.3f}".format(threshold)
+        text = f"{threshold:.3f}"
         draw_coords(draw=draw, text=text, coords=d[2], color=color, width=1)
 
     return img
@@ -150,7 +151,10 @@ def do_detect(raw_pic_url: str = "", api_url: str = ML_API_HOST, ignore: str = "
     detections = []
     ignored = []
     req = requests.get(
-        api_url + "/p/", params={"img": raw_pic_url, "ignore": ignore}, verify=False
+        api_url + "/p/",
+        params={"img": raw_pic_url, "ignore": ignore},
+        timeout=10,
+        verify=False,
     )
     req.raise_for_status()
 
@@ -163,6 +167,7 @@ def do_detect(raw_pic_url: str = "", api_url: str = ML_API_HOST, ignore: str = "
     return detections, ignored
 
 
+# pylint: disable=too-many-arguments, too-many-locals, too-many-positional-arguments
 def process_image(
     api,
     img_url,
@@ -175,37 +180,37 @@ def process_image(
     returnimg=False,
 ):
     """fetch image, do detection and draw detected boxes on the image"""
-    logging.info(f"treshold={treshold}")
+    logging.info("treshold=%s", treshold)
     VISUALIZATION_THRESH = float(treshold)
-    logging.info(f"api={api}")
-    logging.info(f"ignore={ignore}")
-    logging.info(f"show={show}")
-    logging.info(f"img_url={img_url}")
-    logging.info(f"saveimg={saveimg}")
-    logging.info(f"savedet={savedet}")
+    logging.info("api=%s", api)
+    logging.info("ignore=%s", ignore)
+    logging.info("show=%s", show)
+    logging.info("img_url=%s", img_url)
+    logging.info("saveimg=%s", saveimg)
+    logging.info("savedet=%s", savedet)
 
     ignore_str = ignore
     ignore_list = json.loads(ignore)
     if not all(isinstance(elem, list) for elem in ignore_list):
-        logging.warn(
-            f"Failed to parse ignore param as list of lists, assuming empty list."
+        logging.warning(
+            "Failed to parse ignore param as list of lists, assuming empty list."
         )
         ignore = []
         ignore_str = ""
-    logging.info(f"ignore_list: {ignore_list}")
+    logging.info("ignore_list: %s", ignore_list)
 
-    req = requests.get(img_url, stream=True)
+    req = requests.get(img_url, stream=True, timeout=10)
     req.raise_for_status()
     detections, ignored = do_detect(img_url, api, ignore_str)
     detections_json = json.dumps(detections)
     ignored_json = json.dumps(ignored)
-    logging.info(f"detections: {detections_json}")
-    logging.info(f"ignored: {ignored_json}")
+    logging.info("detections: %s", detections_json)
+    logging.info("ignored: %s", ignored_json)
 
     if savedet:
-        with open(savedet, "w") as fp:
+        with open(savedet, "w", encoding="utf-8") as fp:
             fp.write(json.dumps(detections) + "\n")
-        logging.info(f"saved detection json to {savedet}")
+        logging.info("saved detection json to %s", savedet)
 
     if show or saveimg or returnimg:
         detections_to_visualize = detections
@@ -222,15 +227,17 @@ def process_image(
             ignore=ignore_list,
         )
 
-    if show:
-        image_with_detections.show()
+        if show:
+            image_with_detections.show()
 
-    if saveimg:
-        image_with_detections.save(saveimg)
-        logging.info(f"saved detection image to {saveimg}")
+        if saveimg:
+            image_with_detections.save(saveimg)
+            logging.info("saved detection image to %s", saveimg)
 
-    if returnimg:
-        return image_with_detections
+        if returnimg:
+            return image_with_detections
+
+    return None
 
 
 @click.command()
@@ -266,9 +273,11 @@ def process_image(
     "treshold",
     "--treshold",
     default=VISUALIZATION_THRESH,
-    help=f"treshold for visualizations, notice that this is separate to obico ml_api treshold, default {VISUALIZATION_THRESH}",
+    help=f"treshold for visualizations, notice that this is separate to obico ml_api treshold, \
+        default {VISUALIZATION_THRESH}",
 )
 @click.argument("img_url")
+# pylint: disable=missing-function-docstring
 def process_image_cli(
     img_url, show, api, ignore, saveimg, savedet, treshold, show_below_treshold
 ):
@@ -285,4 +294,4 @@ def process_image_cli(
 
 
 if __name__ == "__main__":
-    process_image_cli()
+    process_image_cli()  # pylint: disable=no-value-for-parameter

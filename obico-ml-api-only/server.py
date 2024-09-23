@@ -1,6 +1,6 @@
 """render detections from ml_api and return as image
 
-userful for calling via curl or other tools
+useful for calling via curl or other tools
 
 """
 import io
@@ -50,10 +50,10 @@ def render():
     )
 
 
-# healtchcheck and readiness endpoint
+# health check and readiness endpoint
 @application.route("/ready", methods=["GET"])
 def health_check():
-    """app healch check
+    """app health check
 
     frankly speaking not much to return in here
     """

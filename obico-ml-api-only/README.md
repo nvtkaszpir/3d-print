@@ -280,3 +280,10 @@ Remember to replace it with your specific data, such as:
 - camera address to fetch image
 - addresses of the obico_ml_api and web app to generate image preview with detections
 - discord bot token and user id
+
+## Trash notes
+
+```bash
+docker run -it -p 3333:3333 bagno.hlds.pl:16000/quay.io/kaszpir/ml_api:812a05b7-arm64 gunicorn \
+    --bind 0.0.0.0:3333 --workers 1 wsgi --preload -e DARKNET_PATH=/darknet
+```
