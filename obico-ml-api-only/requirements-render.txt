@@ -1,6 +1,6 @@
 click==8.1.7
 requests==2.32.0
 urllib3==2.2.2
-Pillow==10.2.0
+Pillow==10.3.0
 Flask==2.3.3
 gunicorn==22.0.0
