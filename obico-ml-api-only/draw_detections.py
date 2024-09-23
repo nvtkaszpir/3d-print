@@ -199,8 +199,6 @@ def process_image(
         ignore_str = ""
     logging.info("ignore_list: %s", ignore_list)
 
-    req = requests.get(img_url, stream=True, timeout=10)
-    req.raise_for_status()
     detections, ignored = do_detect(img_url, api, ignore_str)
     detections_json = json.dumps(detections)
     ignored_json = json.dumps(ignored)
@@ -213,6 +211,9 @@ def process_image(
         logging.info("saved detection json to %s", savedet)
 
     if show or saveimg or returnimg:
+        req = requests.get(img_url, stream=True, timeout=10)
+        req.raise_for_status()
+
         detections_to_visualize = detections
         ignored_to_visualize = ignored
         if not show_below_treshold:
