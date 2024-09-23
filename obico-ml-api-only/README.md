@@ -62,8 +62,9 @@ python3 draw_detections.py --api http://127.0.0.1:3333 https://bagno.hlds.pl/obi
 
 This should export detections to json and image file, each one can be further passed by other tools.
 
-![out.png](./out.jpg)
+![out.jpg](./out.jpg)
 
+[out.json](./out.json)
 <!-- markdownlint-disable html line-length -->
 ```json
 [["failure", 0.502, [758.0, 969.0, 113.0, 160.0]], ["failure", 0.44, [1012.0, 959.0, 121.0, 174.0]], ["failure", 0.241, [1034.0, 1066.0, 120.0, 176.0]], ["failure", 0.238, [939.0, 967.0, 134.0, 161.0]], ["failure", 0.174, [921.0, 1062.0, 164.0, 184.0]], ["failure", 0.163, [797.0, 1051.0, 117.0, 154.0]], ["failure", 0.1, [801.0, 1140.0, 140.0, 86.0]]]

@@ -84,13 +84,17 @@ def draw_coords(
     # get coords as shape, a tuple of point
     shape = shape_points(coords)
 
-    # draw a shape, box
+    # draw a bounding box
     draw.line(shape, fill=color, width=width)
+    # draw a text in the top left corner
+    font = ImageFont.truetype("FreeMonoBold", font_size)
 
-    # draw a text in the corner
     (x1, y1) = shape[0]  # location where to write text, in here this is top left corner
-    font = ImageFont.truetype("FreeMono", font_size)
-    draw.text((x1 + width, y1 + width), text, font=font)
+    left, top, right, bottom = draw.textbbox((x1, y1), text, font=font)
+    draw.rectangle(
+        (left - width, top - width, right + width, bottom + width), fill="black"
+    )
+    draw.text((x1, y1), text, font=font, fill="white")
 
     logging.debug("draw coords=%s text=%s color=%s", coords, text, color)
 
@@ -122,7 +126,7 @@ def overlay_detections(img, detections, ignored, ignore):
         threshold = d[1]
         color = threshold_to_color(0.0)
         text = f"{threshold:.3f}"
-        draw_coords(draw=draw, text={text}, coords=d[2], color=color, width=3)
+        draw_coords(draw=draw, text=text, coords=d[2], color=color, width=3)
 
     # draw detections
     for d in detections:
