@@ -284,7 +284,12 @@ Remember to replace it with your specific data, such as:
 
 ## Trash notes
 
+<!-- markdownlint-disable html line-length -->
 ```bash
-docker run -it -p 3333:3333 bagno.hlds.pl:16000/quay.io/kaszpir/ml_api:812a05b7-arm64 gunicorn \
-    --bind 0.0.0.0:3333 --workers 1 wsgi --preload -e DARKNET_PATH=/darknet
+docker run -it -p 3333:3333 bagno.hlds.pl:16000/quay.io/kaszpir/ml_api:812a05b7-arm64 gunicorn --bind 0.0.0.0:3333 --workers 1 wsgi --preload -e DARKNET_PATH=/darknet
+
+
+docker-compose up render
+curl  "http://127.0.0.1:3334/r/?api=http://obico-ml-api.intra.hlds.pl&img=http://bagno.hlds.pl/obico/bad_1.jpg&ignore=%5B%5B320%2C32%2C640%2C64%5D%2C%5B188%2C600%2C376%2C1200%5D%2C%5B1507%2C600%2C185%2C1200%5D%5D" --output test.jpg
 ```
+<!-- markdownlint-enable html line-length -->
