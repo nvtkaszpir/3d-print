@@ -1,5 +1,5 @@
 # hadolint ignore=DL3008
-FROM python:3.12.2-slim-bookworm
+FROM python:3.12.6-slim-bookworm
 
 WORKDIR /app
 COPY requirements-render.txt /app
@@ -15,7 +15,7 @@ RUN apt-get update \
         ca-certificates \
         curl \
         fonts-freefont-ttf \
-    && pip3 install --upgrade --no-cache-dir pip==23.3.2 \
+    && pip3 install --upgrade --no-cache-dir pip==24.2 \
     && pip3 install --no-cache-dir -r requirements-render.txt \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
