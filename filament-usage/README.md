@@ -34,7 +34,8 @@ without need for a filament change.
   and choose such load cell that it can sustain expected weight range, I suggest 5kg, otherwise anything
   more can be less precise or reaching lower read limit, and and anything less will reach the upper reading limits
 - [load cell amplifier](https://www.sparkfun.com/products/13879) - with hx711 sensor
-- some metal/plastic/wooden planks + screws + washers
+- [dedicated spool roller](https://www.printables.com/model/1047257-load-cell-mod-for-ikea-samla-filament-spool-roller)
+  or some metal/plastic/wooden planks + screws + washers
 - at least 4 dupont cables - between load cell amplifier and esp32
 - at least 2 example weights with precise values to calibrate the load cell,
   such as 0.5kg and 1kg - or a measuring cup from the kitchen that you can fill in with the water
@@ -162,4 +163,5 @@ Now we have `a` and `b` values.
   fields on the top of the dashboard,
 - Adjust those to meet your needs such as spool size, filament diameter and density,
   on the right I've added some known example values for given spools.
-- Remember to change those values when you place a new spool.
+- Remember to change those values when you place a new spool
+- remember to save dashboard on changed parameters

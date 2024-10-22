@@ -91,7 +91,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 2,
   "id": null,
-  "iteration": 1713216317074,
+  "iteration": 1729624814763,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -133,7 +133,9 @@
               "mode": "area"
             }
           },
+          "decimals": 1,
           "mappings": [],
+          "min": -15,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -184,6 +186,18 @@
           "legendFormat": "weight (g)",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_VICTORIAMETRICS_BAGNO}"
+          },
+          "editorMode": "code",
+          "expr": "((avg_over_time(homeassistant_sensor_state{entity=\"sensor.esp32_devkit_v4_9e8360_hx711_value\"}[5m])-$b)/$a)-$spool_weight-$dolly",
+          "hide": false,
+          "legendFormat": "5m avg weight (g)",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Filament weight left",
@@ -228,6 +242,7 @@
             }
           },
           "mappings": [],
+          "min": -10,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -278,6 +293,18 @@
           "legendFormat": "length (m)",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_VICTORIAMETRICS_BAGNO}"
+          },
+          "editorMode": "code",
+          "expr": "(((avg_over_time(homeassistant_sensor_state{entity=\"sensor.esp32_devkit_v4_9e8360_hx711_value\"}[5m])-$b)/$a)-$spool_weight-$dolly)/($density*3.1415*$diameter*$diameter/4)",
+          "hide": false,
+          "legendFormat": "5min avg length (m)",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Filament meters left",
@@ -349,6 +376,18 @@
           "legendFormat": "length (m)",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_VICTORIAMETRICS_BAGNO}"
+          },
+          "editorMode": "code",
+          "expr": "(((avg_over_time(homeassistant_sensor_state{entity=\"sensor.esp32_devkit_v4_9e8360_hx711_value\"}[5m])-$b)/$a)-$spool_weight-$dolly)/($density*3.1415*$diameter*$diameter/4)",
+          "hide": false,
+          "legendFormat": "5m avg ength (m)",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Filament meters left",
@@ -367,7 +406,7 @@
       },
       "id": 6,
       "options": {
-        "content": "**Spool Weight:**\n- 200g Prusa\n- 245g Rosa 3D\n- 255g Devil Design\n\n**Density**\n- 1.23 PETG Devil Design\n- 1.27 PETG Prusa\n- 1.29 PETG Rosa3D GLOW\n\n**Diameter**\n- 1.75 - standard",
+        "content": "**Spool Weight:**\nin grams:\n- 200 Prusa\n- 245 Rosa 3D\n- 255 Devil Design\n- 290 Fiberlogy\n\n**Density**\n- 1.27 Easy PETG Fiberlogy\n- 1.23 PETG Devil Design\n- 1.27 PETG Prusa\n- 1.29 PETG Rosa3D GLOW\n\n\n**Diameter**\n- 1.75 - standard",
         "mode": "markdown"
       },
       "pluginVersion": "8.5.27",
@@ -440,6 +479,18 @@
           "legendFormat": "weight (g)",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_VICTORIAMETRICS_BAGNO}"
+          },
+          "editorMode": "code",
+          "expr": "((avg_over_time(homeassistant_sensor_state{entity=\"sensor.esp32_devkit_v4_9e8360_hx711_value\"}[5m])-$b)/$a)-$spool_weight-$dolly",
+          "hide": false,
+          "legendFormat": "5m avg weight (g)",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Filament weight left",
@@ -752,26 +803,26 @@
       {
         "current": {
           "selected": false,
-          "text": "255",
-          "value": "255"
+          "text": "290",
+          "value": "290"
         },
         "description": "spool weight in grams",
         "hide": 0,
         "name": "spool_weight",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "240",
             "value": "240"
           }
         ],
-        "query": "240",
+        "query": "290",
         "skipUrlSync": false,
         "type": "textbox"
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "1.29",
           "value": "1.29"
         },
@@ -781,8 +832,8 @@
         "options": [
           {
             "selected": true,
-            "text": "1.23",
-            "value": "1.23"
+            "text": "1.29",
+            "value": "1.29"
           }
         ],
         "query": "1.29",
@@ -820,12 +871,12 @@
         "name": "dolly",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "110",
             "value": "110"
           }
         ],
-        "query": "110",
+        "query": "95",
         "skipUrlSync": false,
         "type": "textbox"
       },
@@ -857,6 +908,6 @@
   "timezone": "",
   "title": "Tensor Beam",
   "uid": "CZXVMnnSz",
-  "version": 20,
+  "version": 26,
   "weekStart": ""
 }
