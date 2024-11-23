@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# rm -rf Prusa-Firmware-Buddy/
-# git clone --depth=1 https://github.com/prusa3d/Prusa-Firmware-Buddy.git
+rm -rf Prusa-Firmware-Buddy/
+git clone --depth=1 https://github.com/prusa3d/Prusa-Firmware-Buddy.git
 
 pushd Prusa-Firmware-Buddy || exit 1
 commit=$(git rev-parse HEAD)
