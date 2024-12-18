@@ -28,7 +28,12 @@ def send_statsd(detections, ignored, duration):
     statsd.gauge("draw_detections", len(detections))
     statsd.gauge("draw_ignored", len(ignored))
     statsd.timing("draw_get_req", duration)
-    # logging.debug("draw_detections=%s draw_ignored=%s draw_get_req=%s", len(detections), len(ignored), duration)
+    logging.debug(
+        "statsd draw_detections=%s draw_ignored=%s draw_get_req=%s",
+        len(detections),
+        len(ignored),
+        duration,
+    )
 
 
 def threshold_to_color(threshold: float = 0.0):
