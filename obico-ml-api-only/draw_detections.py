@@ -10,7 +10,7 @@ import click
 import requests
 from PIL import Image, ImageDraw, ImageFile, ImageFont
 from statsd.defaults.env import statsd
-from statsd import StatsClient
+
 
 logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
 
@@ -19,8 +19,6 @@ VISUALIZATION_THRESH = 0.2
 
 # fix for getting images from url
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-
-statsd = StatsClient()
 
 
 def send_statsd(detections, ignored, duration):

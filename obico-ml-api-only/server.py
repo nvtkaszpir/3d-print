@@ -6,8 +6,22 @@ useful for calling via curl or other tools
 import io
 import flask
 import draw_detections
+from statsd.defaults.env import statsd
+from os import environ
 
 application = flask.Flask(__name__)
+
+STATSD_HOST = environ.get("STATSD_HOST", "127.0.0.1")
+STATSD_PORT = environ.get("STATSD_PORT", "8125")
+STATSD_PREFIX = environ.get("STATSD_PREFIX", "obico.render")
+STATSD_MAXUDPSIZE = environ.get("STATSD_MAXUDPSIZE")
+STATSD_IPV6 = environ.get("STATSD_IPV6", "0")
+
+application.logger.info(f"STATSD_HOST={STATSD_HOST}")
+application.logger.info(f"STATSD_PORT={STATSD_PORT}")
+application.logger.info(f"STATSD_PREFIX={STATSD_PREFIX}")
+application.logger.info(f"STATSD_MAXUDPSIZE={STATSD_MAXUDPSIZE}")
+application.logger.info(f"STATSD_IPV6={STATSD_IPV6}")
 
 
 @application.route("/", methods=["GET"])
@@ -17,6 +31,7 @@ def info():
     return flask.send_file(filename, mimetype="text/html")
 
 
+@statsd.timer("do_render")
 @application.route("/r/", methods=["GET"])
 def render():
     """render detections and return as image
