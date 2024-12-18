@@ -4,3 +4,4 @@ urllib3==2.2.2
 Pillow==10.3.0
 Flask==2.3.3
 gunicorn==22.0.0
+statsd==4.0.1

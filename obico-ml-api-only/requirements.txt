@@ -2,3 +2,4 @@ click==8.1.7
 requests==2.32.0
 urllib3==2.2.2
 Pillow==10.3.0
+statsd==4.0.1

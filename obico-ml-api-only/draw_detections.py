@@ -3,10 +3,14 @@
 """
 import json
 import logging
+import os
+import time
 
 import click
 import requests
 from PIL import Image, ImageDraw, ImageFile, ImageFont
+from statsd.defaults.env import statsd
+from statsd import StatsClient
 
 logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
 
@@ -15,6 +19,16 @@ VISUALIZATION_THRESH = 0.2
 
 # fix for getting images from url
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+statsd = StatsClient()
+
+
+def send_statsd(detections, ignored, duration):
+    """send statsd metric for each detections done and number of ignored detections and duration in miliseconds"""
+    statsd.gauge("draw_detections", len(detections))
+    statsd.gauge("draw_ignored", len(ignored))
+    statsd.timing("draw_get_req", duration)
+    # logging.debug("draw_detections=%s draw_ignored=%s draw_get_req=%s", len(detections), len(ignored), duration)
 
 
 def threshold_to_color(threshold: float = 0.0):
@@ -105,7 +119,7 @@ def overlay_detections(img, detections, ignored, ignore):
     Args:
         img(file): source image, to be used as background
         detections(list): list of detections from obico ml_api
-        ignored(list): list of ignored detections from obico ml_ali
+        ignored(list): list of ignored detections from obico ml_api
         ignore(list): list of areas which are ignored with detections,
             this is the same as passed to obico ml_api
 
@@ -138,6 +152,7 @@ def overlay_detections(img, detections, ignored, ignore):
     return img
 
 
+@statsd.timer("do_detect")
 def do_detect(raw_pic_url: str = "", api_url: str = ML_API_HOST, ignore: str = ""):
     """perform image failure detection by calling obico ml_api
 
@@ -154,13 +169,14 @@ def do_detect(raw_pic_url: str = "", api_url: str = ML_API_HOST, ignore: str = "
     """
     detections = []
     ignored = []
+    start = time.time()
     req = requests.get(
         api_url + "/p/",
         params={"img": raw_pic_url, "ignore": ignore},
         timeout=10,
         verify=False,
     )
-    req.raise_for_status()
+    duration = int((time.time() - start) * 1000)
 
     if "detections" in req.json():
         detections = req.json()["detections"]
@@ -168,10 +184,14 @@ def do_detect(raw_pic_url: str = "", api_url: str = ML_API_HOST, ignore: str = "
     if "ignored" in req.json():
         ignored = req.json()["ignored"]
 
+    send_statsd(detections, ignored, duration)
+
+    req.raise_for_status()
     return detections, ignored
 
 
 # pylint: disable=too-many-arguments, too-many-locals, too-many-positional-arguments
+@statsd.timer("process_image")
 def process_image(
     api,
     img_url,

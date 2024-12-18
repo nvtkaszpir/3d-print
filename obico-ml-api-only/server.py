@@ -7,7 +7,6 @@ import io
 import flask
 import draw_detections
 
-
 application = flask.Flask(__name__)
 
 
