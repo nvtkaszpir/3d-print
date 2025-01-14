@@ -45,7 +45,7 @@ services:
 
   nginx-metrics:
     container_name: nginx_metrics
-    image: "nginx/nginx-prometheus-exporter"
+    image: "nginx/nginx-prometheus-exporter:1.3.0"
     read_only: true
     command: "-nginx.scrape-uri http://nginx:8080/metrics"
     ports:
