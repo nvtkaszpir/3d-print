@@ -13,4 +13,4 @@ tldr:
 - check Slack channel for messages
 - adjust `Extract Printer State` or `toString` nodes to your needs.
 
-![flow.jpg](./flow.jpg)
+![flow.png](./flow.png)
