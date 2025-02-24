@@ -11,6 +11,6 @@ tldr:
 - edit `Slack Webhook` in it - replace URL to the one you tested with curl
 - click Deploy in node-red (top right corner)
 - check Slack channel for messages
-- adjust `Extract Printer State` or `toString` nodes to your needs.
+- adjust `Extract Printer State` or `toString` nodes to your needs and deploy.
 
 ![flow.png](./flow.png)
