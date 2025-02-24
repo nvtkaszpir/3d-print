@@ -1,0 +1,291 @@
+[
+    {
+        "id": "26e92777d1a37544",
+        "type": "tab",
+        "label": "Printer state changed",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7e6a60b422eddbed",
+        "type": "http request",
+        "z": "26e92777d1a37544",
+        "name": "Printer get status",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "X-Api-Key",
+                "valueType": "msg",
+                "valueValue": "api_key"
+            }
+        ],
+        "x": 550,
+        "y": 540,
+        "wires": [
+            [
+                "b3e619134a4e0faf"
+            ]
+        ],
+        "info": "Get printer status.\r\nIt assumes url points to the printer API\r\nwhich returns json object.\r\n\r\nIf you use different printer then you may need\r\nto adjust output.\r\n"
+    },
+    {
+        "id": "f71a6ee3a70dcf26",
+        "type": "inject",
+        "z": "26e92777d1a37544",
+        "name": "trigger every 1s",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 540,
+        "wires": [
+            [
+                "0436b2de9037ab0e"
+            ]
+        ]
+    },
+    {
+        "id": "0436b2de9037ab0e",
+        "type": "function",
+        "z": "26e92777d1a37544",
+        "name": "generate url",
+        "func": "//get flow vars\nvar printer_api_address = \"http://192.168.1.25:80/api/printer\";\nvar printer_api_key = \"redacted\";\n\n// generate msg for http request\nvar msg = {\n    url: printer_api_address,\n    api_key: printer_api_key\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 540,
+        "wires": [
+            [
+                "7e6a60b422eddbed"
+            ]
+        ],
+        "info": "Prepares values which are passed to http get node"
+    },
+    {
+        "id": "b3e619134a4e0faf",
+        "type": "rbe",
+        "z": "26e92777d1a37544",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": false,
+        "property": "payload.state.flags.printing",
+        "topi": "topic",
+        "x": 710,
+        "y": 540,
+        "wires": [
+            [
+                "a1ea0d450b0979f6",
+                "9bda56a014164ec7"
+            ]
+        ]
+    },
+    {
+        "id": "a1ea0d450b0979f6",
+        "type": "debug",
+        "z": "26e92777d1a37544",
+        "name": "debug 26",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "a8fbf7eec798b411",
+        "type": "catch",
+        "z": "26e92777d1a37544",
+        "name": "",
+        "scope": [
+            "857ec085ace53478"
+        ],
+        "uncaught": false,
+        "x": 510,
+        "y": 660,
+        "wires": [
+            [
+                "6a2b483534e5c9b0"
+            ]
+        ]
+    },
+    {
+        "id": "6a2b483534e5c9b0",
+        "type": "debug",
+        "z": "26e92777d1a37544",
+        "name": "debug 28",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "610949822427ce27",
+        "type": "function",
+        "z": "26e92777d1a37544",
+        "name": "toString",
+        "func": "var slack_msg = {};\nslack_msg.payload = {\n    \"text\": msg.payload.toString(),\n};\n\nreturn slack_msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 540,
+        "wires": [
+            [
+                "af2b8a9750900122",
+                "0485e1f1d2bdb73e"
+            ]
+        ]
+    },
+    {
+        "id": "71244c3866b80eda",
+        "type": "debug",
+        "z": "26e92777d1a37544",
+        "name": "debug 29",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1540,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "71e16873c0817a89",
+        "type": "inject",
+        "z": "26e92777d1a37544",
+        "name": "manual trigger",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 910,
+        "y": 460,
+        "wires": [
+            [
+                "610949822427ce27"
+            ]
+        ]
+    },
+    {
+        "id": "af2b8a9750900122",
+        "type": "http request",
+        "z": "26e92777d1a37544",
+        "name": "Slack Webhook",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://hooks.slack.com/services/redacted",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": true,
+        "headers": [
+            {
+                "keyType": "Content-Type",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            }
+        ],
+        "x": 1380,
+        "y": 540,
+        "wires": [
+            [
+                "71244c3866b80eda"
+            ]
+        ]
+    },
+    {
+        "id": "9bda56a014164ec7",
+        "type": "function",
+        "z": "26e92777d1a37544",
+        "name": "Extract printer state",
+        "func": "var out_msg = {};\n\nout_msg.payload = msg.payload.state.text;\n\nreturn out_msg;\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 540,
+        "wires": [
+            [
+                "610949822427ce27"
+            ]
+        ]
+    },
+    {
+        "id": "0485e1f1d2bdb73e",
+        "type": "debug",
+        "z": "26e92777d1a37544",
+        "name": "debug 30",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1300,
+        "y": 440,
+        "wires": []
+    }
+]
