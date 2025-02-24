@@ -1,4 +1,4 @@
-# Node-Red send to Slack status from Prusa printer
+# Node-Red send Prusa printer status to Slack
 
 tldr:
 
