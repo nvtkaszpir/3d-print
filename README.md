@@ -16,6 +16,10 @@ Use at your own risk.
 
   ![linux-thumbnails](linux-thumbnails/linux-thumbnails.png)
 
+- [Node-Red PrusaLink status to Slack](node-red-prusa-link-to-slack/README.md)
+  use Node Red to check printer status via Prusa Link and send status change
+  to Slack via webhook
+
 - [obico-ml-api-only](obico-ml-api-only/README.md)
   run Obico ML API without anything, so you can use it with other projects.
   Also script to draw detections on images.
