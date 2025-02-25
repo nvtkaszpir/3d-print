@@ -47,6 +47,7 @@ Use at your own risk.
   `your laptop <-- http --> proxy injecting auth <-- http --> printer`
 
 - [prusa3d-help-pdf-generator](prusa3d-help-pdf-generator/README.md)
+  **BROKEN since 2025.02.19 when Prusa changed layout of their pages**
   generate PDF files from Prusa3d help articles, for example for offline read
   <!-- markdownlint-disable html line-length -->
   <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg" width="16px" alt="PDF icon"> + <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcci_ihHlaQrtKYWEQe0PbDgoJBWvWhtkoY5kAg7v4bsBeiQVR43_qeU1X3_9aCTgAwFE&usqp=CAU" height="16px" alt="Josef Prusa"> =

@@ -1,5 +1,8 @@
 # prusa3d help pdf generator
 
+**BROKEN since 2025.02.19 when Prusa changed layout of their pages**
+**and I am too lazy to even try to see if it is doable in any other way, RIP***
+
 Fetch pages from help.prusa3d.com and make them as PDF for offline reading.
 
 <!-- markdownlint-disable html line-length -->
