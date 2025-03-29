@@ -25,6 +25,7 @@ such as print files / abort existing print, delete files... etc
 
 - Tested only with Prusa Mini+ v5.1.2, for other printers/configs
   it probably requires additional headers or changed headers.
+- if caching enabled then some things are aggressively cached for 7 days.
 
 # Requirements
 
@@ -93,6 +94,8 @@ based on the path, but the config gets more complex. Usually if you need it then
 ask me on Prusa Discord server.
 
 # Caching
+
+Tested on Prusa Mini+ v6.2.2 only
 
 To avoid issues with too may requests hitting the printer's API I've added caching,
 where thumbnails are for 24h and anything else is for 1s.
