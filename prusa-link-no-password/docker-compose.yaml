@@ -28,6 +28,11 @@ services:
         target: /tmp/nginx/
         tmpfs:
           size: 64M
+      # - type: tmpfs
+      #   target: /data/nginx/cache
+      #   tmpfs:
+      #     size: 2G
+      - "./nginx/cache/:/data/nginx/cache:rw"
     restart: unless-stopped
     healthcheck:
       test: curl --fail http://localhost:8080/health || exit 1
