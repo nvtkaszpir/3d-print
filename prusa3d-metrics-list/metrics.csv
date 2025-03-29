@@ -155,4 +155,4 @@ volt_nozz,FLOAT,https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/47eb31be3db
 volt_nozz_raw,INTEGER,https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/47eb31be3dbec677cbfbf07c470e7fd7014093b6/src/common/app_metrics.cpp#L322
 xbe_fan,CUSTOM,https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/47eb31be3dbec677cbfbf07c470e7fd7014093b6/src/common/feature/xbuddy_extension/xbuddy_extension.cpp#L77
 xlbuddy5VCurrent,FLOAT,https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/47eb31be3dbec677cbfbf07c470e7fd7014093b6/src/common/app_metrics.cpp#L383
-# generated at Sat 15 Mar 09:41:40 UTC 2025,# PrusaFirmwareBuddy commit=47eb31be3dbec677cbfbf07c470e7fd7014093b6,# script source https://github.com/nvtkaszpir/3d-print
+# generated at Sat 29 Mar 08:31:03 UTC 2025,# PrusaFirmwareBuddy commit=47eb31be3dbec677cbfbf07c470e7fd7014093b6,# script source https://github.com/nvtkaszpir/3d-print
