@@ -91,3 +91,26 @@ docker-compose start -d
 It's possible to have one listening port and redirection to different printers
 based on the path, but the config gets more complex. Usually if you need it then
 ask me on Prusa Discord server.
+
+# Caching
+
+To avoid issues with too may requests hitting the printer's API I've added caching,
+where thumbnails are for 24h and anything else is for 1s.
+
+Example:
+
+<!-- markdownlint-disable html line-length -->
+```text
+nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:13:59:27 +0000]  "GET /thumb/l/usb/SHAPE-~1.BGC HTTP/1.1" 200 18631 "http://127.0.0.1:10001/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+nginx_proxy  | cache_default 172.24.0.1 - STALE [29/Mar/2025:13:59:27 +0000]  "GET /api/v1/files/usb/ HTTP/1.1" 304 0 "http://127.0.0.1:10001/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:13:59:27 +0000]  "GET /thumb/l/usb/SHAPE-~3.GCO HTTP/1.1" 200 30766 "http://127.0.0.1:10001/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:13:59:27 +0000]  "GET /thumb/l/usb/SHAPE-~2.BGC HTTP/1.1" 200 18631 "http://127.0.0.1:10001/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+nginx_proxy  | cache_default 172.24.0.1 - HIT [29/Mar/2025:13:59:28 +0000]  "GET /api/v1/files/usb/ HTTP/1.1" 304 0 "http://127.0.0.1:10001/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+nginx_proxy  | cache_default 172.24.0.1 - STALE [29/Mar/2025:13:59:28 +0000]  "GET /api/v1/status HTTP/1.1" 200 265 "http://127.0.0.1:10001/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+nginx_proxy  | cache_default 172.24.0.1 - HIT [29/Mar/2025:13:59:28 +0000]  "GET /api/v1/storage HTTP/1.1" 200 107 "http://127.0.0.1:10001/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:13:59:28 +0000]  "GET /thumb/l/usb/SHAPE-~2.GCO HTTP/1.1" 200 9820 "http://127.0.0.1:10001/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:14:13:56 +0000]  "GET /thumb/l/usb/VSLOT2~7.GCO HTTP/1.1" 200 28924 "-" "curl/7.81.0"
+nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:14:13:58 +0000]  "GET /thumb/l/usb/VSLOT2~7.GCO HTTP/1.1" 200 28924 "-" "curl/7.81.0"
+nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:14:14:00 +0000]  "HEAD /thumb/l/usb/VSLOT2~7.GCO HTTP/1.1" 200 0 "-" "curl/7.81.0"
+```
+  <!-- markdownlint-enable html line-length -->
