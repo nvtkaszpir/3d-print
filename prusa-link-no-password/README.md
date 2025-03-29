@@ -97,7 +97,7 @@ ask me on Prusa Discord server.
 To avoid issues with too may requests hitting the printer's API I've added caching,
 where thumbnails are for 24h and anything else is for 1s.
 
-Example:
+Example access log with cache details:
 
 <!-- markdownlint-disable html line-length -->
 ```text
@@ -114,3 +114,5 @@ nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:14:13:58 +0000]  "GET /
 nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:14:14:00 +0000]  "HEAD /thumb/l/usb/VSLOT2~7.GCO HTTP/1.1" 200 0 "-" "curl/7.81.0"
 ```
   <!-- markdownlint-enable html line-length -->
+
+If youwant to disable logs then remove or comment out lines with `access_log` from the config.
