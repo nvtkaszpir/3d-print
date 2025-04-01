@@ -23,9 +23,15 @@ such as print files / abort existing print, delete files... etc
 
 # Known Limitations
 
-- Tested only with Prusa Mini+ v5.1.2, for other printers/configs
+- Tested only with Prusa Mini+ v5.1.2 (and higher firmware), for other printers/configs
   it probably requires additional headers or changed headers.
-- if caching enabled then some things are aggressively cached for 7 days.
+- if caching enabled then some things are aggressively cached for 7 days,
+  but you are less likely cause weird issues when printing and browsing files on the USB
+
+- you can remove `proxy_set_header X-Api-Key` from the configs and then you would
+  have to provide it on the client side and it will be forwarded to the printer.
+
+- not tested with TLS termination on the nginx, but it should be trivial.
 
 # Requirements
 
@@ -60,6 +66,9 @@ Then edit `docker-compose.yaml` and ensure that ports section targets the port y
 Run `docker-compose start`.
 
 Point your browser to [http://127.0.0.1:10001](http://127.0.0.1:10001)
+
+After that you can add that endpoint as a physical printer in the PrusaSlicer
+and you just need to specify host, API key can be left blank.
 
 If you run docker on different host then remember to allow `10001` on the firewall
 and just use address of the host, so lets say your NAS is on 192.168.1.20 and
@@ -118,4 +127,4 @@ nginx_proxy  | cache_thumb 172.24.0.1 - HIT [29/Mar/2025:14:14:00 +0000]  "HEAD 
 ```
   <!-- markdownlint-enable html line-length -->
 
-If youwant to disable logs then remove or comment out lines with `access_log` from the config.
+If you want to disable logs then remove or comment out lines with `access_log` from the config.
