@@ -1,0 +1,30 @@
+alias: Prusa Mini - turn off Death Lights after print
+description: ""
+triggers:
+  - type: temperature
+    device_id: 33dd80cbc68ba94150918bb24bb6035f
+    entity_id: 1b115973429d0252e7e81f2f2bab1953
+    domain: sensor
+    trigger: device
+    below: 50
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+conditions:
+  - condition: state
+    entity_id: sensor.prusamini
+    state:
+      - idle
+      - finished
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+actions:
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.esp32_c_cddf4c_esp32_c_cddf4c_relay_2
+mode: single

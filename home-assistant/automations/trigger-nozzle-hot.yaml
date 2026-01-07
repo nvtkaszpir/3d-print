@@ -1,0 +1,17 @@
+alias: Prusa Mini - trigger scene.prusa_mini_nozzle_hot
+description: ""
+triggers:
+  - type: temperature
+    device_id: 33dd80cbc68ba94150918bb24bb6035f
+    entity_id: 1b115973429d0252e7e81f2f2bab1953
+    domain: sensor
+    trigger: device
+    above: 70
+conditions: []
+actions:
+  - action: scene.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: scene.prusa_mini_nozzle_hot
+mode: single

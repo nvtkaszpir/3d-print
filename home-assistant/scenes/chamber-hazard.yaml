@@ -1,0 +1,24 @@
+id: "1767815184991"
+name: Prusa Mini - chamber hazard
+entities:
+  light.esp32_c_cddf4c_rgb_stripe:
+    supported_color_modes:
+      - rgb
+    color_mode: rgb
+    brightness: 255
+    hs_color:
+      - 303.059
+      - 100
+    rgb_color:
+      - 255
+      - 0
+      - 242
+    xy_color:
+      - 0.402
+      - 0.162
+    friendly_name: Esp32-C-Cddf4C RGB Stripe
+    supported_features: 40
+    state: "on"
+metadata:
+  light.esp32_c_cddf4c_rgb_stripe:
+    entity_only: true

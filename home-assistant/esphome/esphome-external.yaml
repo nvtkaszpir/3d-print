@@ -1,0 +1,178 @@
+# esp32-c in the Prusa Mini enclosure, to control lights and led strip
+# 3x buttons (binary sensors) - to trigger switches - light yellow (warm), light white (death), fans
+# 4x switches (relays) - to actually control devices - light yellow (warm), light white (death), 2x fans, relay 4 is unused
+# RGB led light to generate color lights depending on the environment within the enclosure based on other automations from HomeAssistant
+
+substitutions:
+  device_name: esp32-c-cddf4c
+  domain: !secret DOMAIN
+
+esphome:
+  name: esp32-c-cddf4c
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+  baud_rate: 0 # disable sending to firt uart device
+  level: INFO
+  logs:
+    component: ERROR
+
+time:
+  - platform: sntp
+    timezone: "Europe/Warsaw"
+    id: sntp_time
+    servers:
+      - pl.pool.ntp.org
+
+web_server:
+  port: 80
+  version: "3" # allows selecting led strip color
+
+api:
+  password: "redacted"
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret WIFI_SSID
+  password: !secret WIFI_PASSWORD
+  ap:
+    ssid: "${device_name}"
+    password: !secret WIFI_AP_PASSWORD
+
+captive_portal:
+
+text_sensor:
+  - platform: version
+    name: "ESPHome Version ${device_name}"
+
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address ${device_name}"
+    ssid:
+      name: "Connected SSID ${device_name}"
+    bssid:
+      name: "Connected BSSID ${device_name}"
+    mac_address:
+      name: "Mac Wifi Address ${device_name}"
+
+button:
+  - platform: restart
+    name: "${device_name} Restart"
+
+sensor:
+  - platform: uptime
+    id: socket_uptime
+    name: "Uptime"
+    icon: mdi:clock-outline
+    update_interval: 60s
+
+  - platform: wifi_signal
+    id: socket_wifi_signal
+    name: "WiFi Signal"
+    update_interval: 30s
+
+  - platform: pulse_counter
+    pin:
+      number: GPIO18
+      mode: INPUT_PULLUP
+    unit_of_measurement: RPM
+    accuracy_decimals: 0
+    name: "${device_name} Pulse Counter 1"
+    update_interval: 1s
+    filters:
+      - multiply: 0.5
+
+  - platform: pulse_counter
+    pin:
+      number: GPIO5
+      mode: INPUT_PULLUP
+    unit_of_measurement: RPM
+    accuracy_decimals: 0
+    name: "${device_name} Pulse Counter 2"
+    update_interval: 1s
+    filters:
+      - multiply: 0.5
+
+switch:
+  - platform: gpio
+    name: "${device_name} Relay 1" # Lights warm
+    id: relay_1
+    pin: GPIO23
+    inverted: true
+  - platform: gpio
+    name: "${device_name} Relay 2" # Lights cold
+    id: relay_2
+    pin: GPIO19
+    inverted: true
+  - platform: gpio
+    name: "${device_name} Relay 3" # Fans
+    id: relay_3
+    pin: GPIO22
+    inverted: true
+  - platform: gpio
+    name: "${device_name} Relay 4" # unused
+    id: relay_4
+    pin: GPIO21
+    inverted: true
+
+binary_sensor:
+
+  - platform: gpio
+    pin: GPIO13
+    name: "Button Red"
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms
+    on_press:
+      then:
+        - switch.toggle: relay_1
+
+  - platform: gpio
+    pin: GPIO12
+    name: "Button White"
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms
+    on_press:
+      then:
+        - switch.toggle: relay_2
+
+  - platform: gpio
+    pin: GPIO14
+    name: "Button Green"
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms
+    on_press:
+      then:
+        - switch.toggle: relay_3
+
+light:
+  - platform: rgb
+    name: "RGB Stripe"
+    red: output_r
+    green: output_g
+    blue: output_b
+
+output:
+  - id: output_r
+    platform: ledc
+    pin: GPIO04
+    frequency: 1000Hz
+    inverted: true
+  - id: output_b
+    platform: ledc
+    pin: GPIO16
+    frequency: 1000Hz
+    inverted: true
+  - id: output_g
+    platform: ledc
+    pin: GPIO17
+    frequency: 1000Hz
+    inverted: true

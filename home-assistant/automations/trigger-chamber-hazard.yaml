@@ -1,0 +1,17 @@
+alias: Prusa Mini - trigger scene.prusa_chamber_hazard if has fumes
+description: ""
+triggers:
+  - type: value
+    device_id: f8fd9f4638f9da7d1e6084c86be0aad7
+    entity_id: 4d0aea2a84f8f58f25ce86f45a4192a4
+    domain: sensor
+    trigger: device
+    above: 5000
+conditions: []
+actions:
+  - action: scene.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: scene.prusa_mini_chamber_hazard
+mode: single

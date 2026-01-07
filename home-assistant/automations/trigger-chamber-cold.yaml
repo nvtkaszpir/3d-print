@@ -1,0 +1,29 @@
+alias: Prusa Mini - trigger scene.prusa_mini_chamber_cold
+description: ""
+triggers:
+  - type: temperature
+    device_id: f8fd9f4638f9da7d1e6084c86be0aad7
+    entity_id: 5033f2e332b85c896820a06a21daec7a
+    domain: sensor
+    trigger: device
+    below: 30
+conditions:
+  - condition: state
+    entity_id: sensor.prusamini
+    state:
+      - finished
+      - idle
+  - condition: state
+    entity_id: sensor.prusamini_material
+    state:
+      - ABS
+      - ASA
+      - PETG
+    attribute: Type
+actions:
+  - action: scene.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: scene.prusa_mini_chamber_cold
+mode: single

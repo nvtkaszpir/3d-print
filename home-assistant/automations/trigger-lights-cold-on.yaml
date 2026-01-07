@@ -1,0 +1,23 @@
+alias: Prusa Mini - turn On Light if started printing
+description: ""
+triggers:
+  - entity_id:
+      - sensor.prusamini
+    to: printing
+    trigger: state
+  - entity_id:
+      - sensor.prusamini_heatbed
+    to: "30"
+    trigger: state
+  - entity_id:
+      - sensor.prusamini_nozzle_temperature
+    to: "50"
+    trigger: state
+conditions: []
+actions:
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.esp32_c_cddf4c_esp32_c_cddf4c_relay_2
+mode: single

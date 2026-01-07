@@ -1,0 +1,24 @@
+id: "1767794770668"
+name: Prusa Mini - nozzle cold
+entities:
+  light.esp32_c_cddf4c_rgb_stripe:
+    supported_color_modes:
+      - rgb
+    color_mode: rgb
+    brightness: 255
+    hs_color:
+      - 228
+      - 100
+    rgb_color:
+      - 0
+      - 51
+      - 255
+    xy_color:
+      - 0.136
+      - 0.057
+    friendly_name: Esp32-C-Cddf4C RGB Stripe
+    supported_features: 40
+    state: "on"
+metadata:
+  light.esp32_c_cddf4c_rgb_stripe:
+    entity_only: true

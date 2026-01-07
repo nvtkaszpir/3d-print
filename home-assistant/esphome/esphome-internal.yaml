@@ -1,0 +1,178 @@
+# esp32-c in the Prusa Mini enclosure, to gather data about the enclosure internals
+# used sensors
+# sgp4x - VOC and NOX
+# bme280 - temperature, humidity, pressure
+# bme680 - temperature, humidity, pressure - I recommend this one
+# pmsx003 - pariculate (big particles)
+# ens160 - VOC, eCO2, air quality (very small particles, such as fumes)
+
+substitutions:
+  device_name: esp32-c-ed76c8
+  domain: !secret DOMAIN
+
+esphome:
+  name: esp32-c-ed76c8
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+  baud_rate: 0
+  logs:
+    component: ERROR
+
+time:
+  - platform: sntp
+    timezone: "Europe/Warsaw"
+    id: sntp_time
+    servers:
+      - pl.pool.ntp.org
+
+web_server:
+  port: 80
+
+api:
+  password: "redacted"
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret WIFI_SSID
+  password: !secret WIFI_PASSWORD
+  ap:
+    ssid: "${device_name}"
+    password: !secret WIFI_AP_PASSWORD
+
+captive_portal:
+
+text_sensor:
+  - platform: version
+    name: "ESPHome Version ${device_name}"
+
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address ${device_name}"
+    ssid:
+      name: "Connected SSID ${device_name}"
+    bssid:
+      name: "Connected BSSID ${device_name}"
+    mac_address:
+      name: "Mac Wifi Address ${device_name}"
+
+  - platform: version
+    name: "ESPHome Version ${device_name}"
+
+i2c:
+  sda: 21
+  scl: 22
+  scan: true
+  id: bus_a
+
+uart:
+  rx_pin: GPIO3
+  tx_pin: GPIO1
+  baud_rate: 9600
+
+button:
+  - platform: restart
+    name: "${device_name} Restart"
+
+sensor:
+  - platform: uptime
+    id: socket_uptime
+    name: "Uptime"
+    icon: mdi:clock-outline
+    update_interval: 60s
+
+  - platform: wifi_signal
+    id: socket_wifi_signal
+    name: "WiFi Signal"
+    update_interval: 30s
+
+
+  - platform: homeassistant
+    id: nora_mikrotik_temperature
+    entity_id: sensor.esp32_devkit_v4_b25938_temperature
+
+  - platform: homeassistant
+    id: nora_mikrotik_humidity
+    entity_id: sensor.esp32_devkit_v4_b25938_humidity
+
+  - platform: sgp4x
+    voc:
+      name: "${device_name} VOC Index"
+    nox:
+      name: "${device_name} NOx Index"
+    compensation:
+      humidity_source: nora_mikrotik_humidity
+      temperature_source: nora_mikrotik_temperature
+
+  - platform: bme680
+    temperature:
+      name: "${device_name} BME680 Temperature"
+    pressure:
+      name: "${device_name} BME680 Pressure"
+    humidity:
+      name: "${device_name} BME680 Humidity"
+    gas_resistance:
+      name: "${device_name} BME680 Gas Resistance"
+    address: 0x76
+    update_interval: 60s
+
+  - platform: bme280_i2c
+    temperature:
+      id: bme280_temperature
+      name: "${device_name} BME280 Temperature"
+    pressure:
+      id: bme280_pressure
+      name: "${device_name} BME280 Pressure"
+    humidity:
+      id: bme280_humidity
+      name: "${device_name} BME280 Humidity"
+    address: 0x77
+    update_interval: 60s
+
+  - platform: ens160_i2c
+    eco2:
+      name: "${device_name} ENS160 eCO2"
+    tvoc:
+      name: "${device_name} ENS160 Total Volatile Organic Compounds"
+    aqi:
+      name: "${device_name} ENS160 Air Quality Index"
+    update_interval: 60s
+    address: 0x53
+    compensation:
+      temperature: bme280_temperature
+      humidity: bme280_humidity
+
+  # particulate sensor https://esphome.io/components/sensor/pmsx003.html
+  - platform: pmsx003
+    type: PMSX003
+    pm_1_0:
+      name: "Particulate Matter <1.0µm Concentration"
+    pm_2_5:
+      name: "Particulate Matter <2.5µm Concentration"
+    pm_10_0:
+      name: "Particulate Matter <10.0µm Concentration"
+    pm_1_0_std:
+      name: "Particulate Matter <1.0µm Concentration at standard particle"
+    pm_2_5_std:
+      name: "Particulate Matter <1.0µm Concentration at standard particle"
+    pm_10_0_std:
+      name: "Particulate Matter <1.0µm Concentration at standard particle"
+    pm_0_3um:
+      name: "Use the number of particles with diameter beyond 0.3um in 0.1L of air."
+    pm_0_5um:
+      name: "Use the number of particles with diameter beyond 0.5um in 0.1L of air."
+    pm_1_0um:
+      name: "Use the number of particles with diameter beyond 1.0um in 0.1L of air."
+    pm_2_5um:
+      name: "Use the number of particles with diameter beyond 2.5um in 0.1L of air."
+    pm_5_0um:
+      name: "Use the number of particles with diameter beyond 5.0um in 0.1L of air."
+    pm_10_0um:
+      name: "Use the number of particles with diameter beyond 10.0um in 0.1L of air."
+    update_interval: 60s # if over 30s then the internal fan will stop between readings, and spins 30s
