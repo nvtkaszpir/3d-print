@@ -16,7 +16,7 @@ esp32:
     type: esp-idf
 
 logger:
-  baud_rate: 0 # disable sending to firt uart device
+  baud_rate: 0 # disable sending to first uart device
   level: INFO
   logs:
     component: ERROR

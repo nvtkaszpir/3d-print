@@ -26,9 +26,55 @@ HomeAssistant scenes and automations to trigger scenes depending on what is happ
 
 See more details about the scenes at the end of this document.
 
-# Wiring
+![image](./enclosure-fs8.png)
 
-TODO in mermaid
+# Diagrams
+
+```mermaid
+sequenceDiagram
+    participant bme680_sensor
+    participant pmma_sensor
+    participant voc_sensor
+    participant esp32_internal
+    participant home_assistant
+    participant esp32_external
+
+    bme680_sensor->>esp32_internal: get temperature within enclosure
+    pmma_sensor->>esp32_internal: get particulate level within enclosure
+    voc_sensor->>esp32_internal: get VOC level within enclosure
+
+    esp32_internal->>home_assistant: send sensor data
+    home_assistant->>home_assistant: automations and scenes
+    home_assistant->>esp32_external: trigger relays or led strip
+```
+
+```mermaid
+sequenceDiagram
+    participant button1
+    participant button2
+    participant button3
+    participant esp32_external
+    participant home_assistant
+    participant relay1
+    participant relay2
+    participant relay3
+    participant led_rgb
+
+    esp32_external->>home_assistant: send data about button press
+    home_assistant->>esp32_external: trigger relays or led strip
+
+    button1->>esp32_external: trigger relay1 directly
+    button2->>esp32_external: trigger relay2 directly
+    button3->>esp32_external: trigger relay3 directly
+
+    esp32_external->>relay1: toggle relay for led warm
+    esp32_external->>relay2: toggle relay for led cold
+    esp32_external->>relay3: toggle relay for fans
+    esp32_external->>led_rgb: control color of the led rgb stripe
+
+```
+
+Exact GPIO connections are in esphome configs, see [esphome section](#esphome).
 
 # Bill of Materials
 
@@ -66,7 +112,13 @@ TODO in mermaid
   or
   [sgp40/sgp41](https://esphome.io/components/sensor/sgp4x/)
 
+![image](./esp-external-fs8.png)
+
+- esp32 devices on the board, helps with connecting cables
+- maybe some groove connectors to attach senssors
 - lots of female-female DuPont jumper wires
+- cables for LED strips
+- cable connectors - for example WAGO
 - soldering iron/soldering skills recommended
 
 # Inputs
@@ -135,6 +187,8 @@ Each fan reports its own speed via pulses to a separate GPIO pin to esp32
   but with some minor changes you can adjust it to older firmware, there is nothing
   special in the configs.
 
+![image](./esp-external-fs8.png)
+
 # HomeAssistant
 
 - add esphome devices to HomeAssistant
@@ -144,7 +198,7 @@ Each fan reports its own speed via pulses to a separate GPIO pin to esp32
 - add triggers to trigger specific scenes based on the nozzle temperature or sensor values
 
 I'm providing raw yaml files, which should guide you how to do it with your devices,
-unfortuantely this is not easy to map directly.
+unfortunately this is not easy to map directly.
 
 ## Scenes
 
