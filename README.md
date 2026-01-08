@@ -11,6 +11,11 @@ Use at your own risk.
 
   ![filament usage](filament-usage/grafana.png)
 
+- [home-assistant](home-assistant/README.md)
+  some Home Assistant + esphome automations around my Prusa Mini
+
+  ![enclosure](home-assistant/enclosure-small-fs8.png)
+
 - [Linux thumbnails](linux-thumbnails/README.md)
   generate thumbnails for file managers such as Thunar (XFCE4)
 
