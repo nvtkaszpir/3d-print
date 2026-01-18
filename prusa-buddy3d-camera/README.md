@@ -92,8 +92,17 @@ We use firmware `cam-3.1.0.tar` but it should also work with `cam-3.1.2.tar`.
 - perform steps in the section above
 - in the system under mac/linux write `telnet <camera_ip_address>` or under windows use Putty
   to connect to the camera
+- username `root`, password `rockchip`
 
 # Blocking updates
 
 - in DNS set `connect-ota.prusa3d.com` to 127.0.0.1
 - optionally mount root partition on the device as rw, add entry to /etc/hosts for the domain and restore ro partition
+
+# Other notes
+
+- the camera is based on armv7 arch so you should be able to run binaries built
+  for armv6 or armv7 on it without an issue (but not arm64 or anything else)
+- single core rockchip, so not much compute power is available
+
+- worth to see to /userdata and /tmp and /oem directories
