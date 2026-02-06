@@ -1,6 +1,7 @@
 # Prusa Buddy3D Camera hacks
 
 ![camera image](./camera_small.png)
+![rclone image](https://rclone.org/img/logo_on_dark__horizontal_color.svg)
 
 # Disclaimer
 
