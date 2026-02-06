@@ -76,7 +76,7 @@ generally new firmware works better with the Wi-Fi setups.
 - turn off the camera from the USB power
 - put microSD card it into the camera
 - plug in cable to the camera
-- you should hear the firmware update was performed (succesful)
+- you should hear the firmware update was performed (successful)
 - device should restart and try to connect to the wifi (and will probably fail)
 - the `cus_update_ota.tar` will be gone from the card
 
@@ -119,8 +119,9 @@ lp_app --noshell --log2file /mnt/sdcard/logs &
 
 - put microSD card back into the camera
 - power on the camera, wait until it connects to the wifi
-
-- in the system under Mac/Linux write `telnet <camera_ip_address>` or under Windows use Putty
+- find the camera in your router setup in DHCP config, otherwise see the PrusaConnect
+  for the camera details and see th IP address, referenced later as `camera_ip_address`,
+- in the system under Mac/Linux write `telnet camera_ip_address` or under Windows use Putty
   to connect to the camera
 
 - username `root`, password `rockchip`
@@ -136,17 +137,17 @@ This is already a part of the scripts below, generally you need to set `rtsp_ser
   such as if the Connect says `Wi-Fi IPv4 address 192.168.1.75` then `camera_ip_address` is `192.168.1.75`
 
 - use the `camera_ip_address` to connect to it via VLC:
-  Open Network `rtsp://<camera_ip_address>/live`
+  Open Network `rtsp://camera_ip_address/live`
   so if your then `camera_ip_address` is `192.168.1.75` then VLC network address is `rtsp://192.168.1.75/live`
 
 - under Linux you can just try in the terminal:
-  `ffplay rtsp://<camera_ip_address>/live` such as
+  `ffplay rtsp://camera_ip_address/live` such as
   `ffplay rtsp://192.168.1.75/live`
 
 ## Disable RTSP
 
 This is optional, because if the streaming is enabled then the script will not do any sync.
-You have to disable screaming in Prusa Connect or in the scripts.
+You have to disable streaming in Prusa Connect or in the scripts.
 
 Via script - you can comment out sections related to `enable rtsp server over...` in `lp_app.sh`,
 Or disable/enable it via PrusaConnet.
@@ -155,16 +156,20 @@ Or disable/enable it via PrusaConnet.
 
 ## Prepare rclone and config
 
+- install locally rclone for given architecture so you can run it in the terminal/console
+
+- run `rclone configure --config rclone.conf` and follow setting up a new remote,
+  for example [SMB](https://rclone.org/smb/) for NAS, generally you are creating a new rclone remote
+
+- make sure the config works via `rclone --config rclone.conf ls <remote_name>:/some/path`
+  (where `/some/path` is a full path to the samba share and path), this is your `RCLONE_DST`,
+  in my setup it is named `bagno-smb:media/prusa/` because remote is named `bagno-smb` whis is a samba
+  server with a `media` share, with `prusa/` path within the share
+
 - download rclone binary for [ARMv7 32Bit Linux](https://downloads.rclone.org/v1.73.0/rclone-v1.73.0-Linux-arm-v7.zip),
   unpack the zip, the `rclone` file is important
 
-- install locally rclone for given architecture
-
-- run `rclone confiture --config rclone.conf` and follow setting up a new remote,
-  for example [SMB](https://rclone.org/smb/) for NAS
-
-- make sure the config works via `rclone --config rclone.conf ls <remote_name>:/some/path`
-  (where `/some/path` is a full path to the samba share and path)
+- copy ARMv7 32Bit Linux `rclone` to microsd card
 
 ## microSD card preparation
 
