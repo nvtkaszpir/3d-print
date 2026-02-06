@@ -1,7 +1,8 @@
 # Prusa Buddy3D Camera hacks
 
 ![camera image](./camera_small.png)
-![rclone image](https://rclone.org/img/logo_on_dark__horizontal_color.svg)
+
+![rclone image](./rclone.png)
 
 # Disclaimer
 
@@ -268,3 +269,11 @@ but better option would be detecting if the timelapse is finished, thus stopping
 and then start rclone sync/move files to remote location and turn on lpp_app back again.
 
 Similar issues with any golang related log forwarding (promtail, otel maybe...)
+
+## Rclone logo resize
+
+```shell
+wget https://rclone.org/img/logo_on_dark__horizontal_color.svg
+convert -density 396 -resize 396x -background black logo_on_dark__horizontal_color.svg rclone.png
+0
+```
