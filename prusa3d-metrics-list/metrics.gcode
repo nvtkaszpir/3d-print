@@ -1,4 +1,4 @@
-;generated at Fri  2 Jan 19:18:32 UTC 2026, PrusaFirmwareBuddy commit=b91eeda0c16a9931126ea065f2fa2bcc8a983b8d, script source https://github.com/nvtkaszpir/3d-print
+;generated at Fri  6 Feb 22:50:59 UTC 2026, PrusaFirmwareBuddy commit=b91eeda0c16a9931126ea065f2fa2bcc8a983b8d, script source https://github.com/nvtkaszpir/3d-print
 M331 24VVoltage ;metric type FLOAT - https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/b91eeda0c16a9931126ea065f2fa2bcc8a983b8d/src/common/app_metrics.cpp#L347
 M331 5VVoltage ;metric type FLOAT - https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/b91eeda0c16a9931126ea065f2fa2bcc8a983b8d/src/common/app_metrics.cpp#L351
 M331 active_extruder ;metric type INTEGER - https://github.com/prusa3d/Prusa-Firmware-Buddy/blob/b91eeda0c16a9931126ea065f2fa2bcc8a983b8d/src/common/app_metrics.cpp#L163
