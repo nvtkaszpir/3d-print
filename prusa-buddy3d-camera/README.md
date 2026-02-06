@@ -26,6 +26,11 @@ Major input was taken from [reddit post by j4cbo](https://old.reddit.com/r/prusa
   more hardware details are required to added here
 - firmware 3.1.0 (also worked on 3.1.2 on my setup)
 
+# Known limitations
+
+- tested only on firmware 3.1.0 and 3.1.2
+- sounds used are from the stock rom, they can be misleading :)
+
 # Overview
 
 - prepare microSD card to be formatted as MBR partition table with single primary partition as FAT32
@@ -38,6 +43,23 @@ Major input was taken from [reddit post by j4cbo](https://old.reddit.com/r/prusa
 - prepare `lp_app.sh` script on the microSD card on the root directory with the contents below (more details later)
 
 # Firmware
+
+You can get the info about current firmware via visiting [https://connect-ota.prusa3d.com/](https://connect-ota.prusa3d.com/)
+
+```shell
+curl https://connect-ota.prusa3d.com/ | jq '.'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                Dload  Upload   Total   Spent    Left  Speed
+100   137  100   137    0     0    831      0 --:--:-- --:--:-- --:--:--   835
+{
+  "file": "https://connect-ota.prusa3d.com/file/cam-3.1.2.tar",
+  "last_version": "3.1.2",
+  "sha1sum": "422ad4e2676e1a6c6991ffdfbb3fdc0882335617"
+}
+
+```
+
+As you can see in the above example the last version available is `3.2.1`.
 
 ## Flashing new firmware to the camera
 
@@ -62,6 +84,7 @@ generally new firmware works better with the Wi-Fi setups.
   no special letters such as spaces or dollar sign are recommended in SSID or password
   (generally there can be an issue that the wifi script treats dollars as passed in variables and thus fails,
   same with the space in the values where it may treat them as extra parameters to the script)
+
 - go to [PrusaConnect Printers](https://connect.prusa3d.com/printers/) to your printer
 - make sure the desired printer is already powered on and visible and active (online) on the Connect page
 - select the desired printer, select Camera tab
@@ -74,15 +97,38 @@ generally new firmware works better with the Wi-Fi setups.
 - if the camera connected to the wifi, very good, if not, oh well, try with wifi password that has multiples 8 letters
 - wait about 30s and remove power from the camera, remove the microSD card
 
-# Enabling RTSP
+# Enabling telnet
 
 - turn off the camera, remove the microSD card
 - put microSD card in the computer
-- create a file named `lp_app.sh` on it, or copy it from the current repo,
-  below absolute minimum version to have it up and running with RTSP enabled
-- saafe eject the microSD,
+- copy `lp_app.sh` onto the microSD card
+- generally you need to have a `lp_app.sh` on the microsd card with the content:
+
+```shell
+#!/bin/sh
+
+# enable telnet
+telnetd
+# spawn basic app to enable wifi and other stuff
+lp_app --noshell --log2file /mnt/sdcard/logs &
+```
+
+- safe eject the microSD,
+
 - put microSD card back into the camera
 - power on the camera, wait until it connects to the wifi
+
+- in the system under Mac/Linux write `telnet <camera_ip_address>` or under Windows use Putty
+  to connect to the camera
+
+- username `root`, password `rockchip`
+
+# Enabling RTSP
+
+This is already a part of the scripts below, generally you need to set `rtsp_server_mode=2` via scripts, see below
+
+# RTSP streaming
+
 - find the camera in your router setup in DHCP config, otherwise see the PrusaConnect
   for the camera details and see th IP address, referenced later as `camera_ip_address`,
   such as if the Connect says `Wi-Fi IPv4 address 192.168.1.75` then `camera_ip_address` is `192.168.1.75`
@@ -91,16 +137,67 @@ generally new firmware works better with the Wi-Fi setups.
   Open Network `rtsp://<camera_ip_address>/live`
   so if your then `camera_ip_address` is `192.168.1.75` then VLC network address is `rtsp://192.168.1.75/live`
 
-- under linux you can just try in the terminal:
+- under Linux you can just try in the terminal:
   `ffplay rtsp://<camera_ip_address>/live` such as
   `ffplay rtsp://192.168.1.75/live`
 
-# Enabling telnet
+## Disable RTSP
 
-- perform steps in the section above
-- in the system under mac/linux write `telnet <camera_ip_address>` or under windows use Putty
-  to connect to the camera
-- username `root`, password `rockchip`
+This is optional, because if the streaming is enabled then the script will not do any sync.
+You have to disable screaming in Prusa Connect or in the scripts.
+
+Via script - you can comment out sections related to `enable rtsp server over...` in `lp_app.sh`,
+Or disable/enable it via PrusaConnet.
+
+# Enabling rclone auto sync
+
+## Prepare rclone and config
+
+- download rclone binary for [ARMv7 32Bit Linux](https://downloads.rclone.org/v1.73.0/rclone-v1.73.0-Linux-arm-v7.zip),
+  unpack the zip, the `rclone` file is important
+
+- install locally rclone for given architecture
+
+- run `rclone confiture --config rclone.conf` and follow setting up a new remote,
+  for example [SMB](https://rclone.org/smb/) for NAS
+
+- make sure the config works via `rclone --config rclone.conf ls <remote_name>:/some/path`
+  (where `/some/path` is a full path to the samba share and path)
+
+## microSD card preparation
+
+- turn off the camera, remove the microSD card
+- put microSD card in the computer
+- copy `lp_app.sh` onto the microSD card
+- **THIS IS REQUIRED** edit `sync_loop.sh` and change `RCLONE_DST` to the valid rclone remote you tested in the step above
+- copy `sync_loop.sh` onto the microSD card
+- copy `rclone.conf` onto the microSD card
+- copy `rclone` ARMv7 binary onto the microSD card
+
+- safe eject the microSD,
+
+- put microSD card back into the camera
+- power on the camera, wait until it connects to the wifi
+
+- control camera over PrusaConnect - disable streaming, enable timelapse, wait 30s, stop timelapse
+
+- if you disable streaming and enable timelapse and then stop timelapse, then after few second you should hear a sound
+  (something about auto destruction..) which means rclone process started
+
+- after successful rclone you will hear 'wifi connection...' again and the camera is back to the normal operation mode
+- if not, see debug section
+
+## Debug
+
+See `tail -f /mnt/sdcard/debug.log` or `/mnt/sdcard/rclone.log` for more details.
+you can `killall <script_pid>` for debug, or whatever.
+
+The best option is to telnet to the camera, stop the script via (then you have 10min for debug) and run rclone commands directly
+to see what is wrong.
+
+Notice that rclone params seems to work with my setup (smb sync),
+and increasing connections/transfers/memory will quickly lead to the out of memory kills.
+If you have another working setup, then pease make an issue/PR, ask me on Discord.
 
 # Blocking updates
 
@@ -120,14 +217,16 @@ mount -o remount,ro /
 
 # Other notes
 
+- no bash in the image, use sh for scripts (busybox ash)
 - the camera is based on armv7 arch so you should be able to run binaries built
   for armv6 or armv7 on it without an issue (but not arm64 or anything else)
-- single core rockchip, so not much compute power is available
+- single core cpu - rockchip, so not much compute power is available
 - generally running app for the snapshots + streaming leaves about 6MB of free memory, not much to run anything else
 - worth to see to /userdata and /tmp and /oem directories
 
 # More advanced settings
 
+- unmount and mount microsd with permissions to exec files, as in the [sync_loop.sh](./sync_loop.sh)
 - microSD can be partitioned to two partitions and on the second partition you can make ext4
   and store executable files if needed
 - I suggest mounting it under /tmp/sdcard2:
@@ -143,7 +242,7 @@ mount /dev/mmcblk1p2 /tmp/sdcard2
 - building armv7 golang binaries:
 
 ```shell
-GOOS=linux GOARCH=arm GOARM=7 go build .
+GOOS=Linux GOARCH=arm GOARM=7 go build .
 ```
 
 but you usually need to remove includes to minimize the app memory usage to absolute minimum, otherwise
