@@ -41,6 +41,12 @@ Use at your own risk.
   allows to access Raspberry Pi CSI cameras as snapshots via web url
   nicely integrates with [obico-ml-api-only](./obico-ml-api-only/README.md)
 
+- [prusa-buddy3d-camera](prusa-buddy3d-camera/README.md)
+  sync files from the Prusa Buddy3D camera to remote locations such as NAS using rclone.
+
+  ![camera logo](./prusa-buddy3d-camera/camera-small.png)
+  ![rclone logo](./prusa-buddy3d-camera/rclone.png)
+
 - [prusa-connect-proxy](prusa-connect-proxy/README.md)
   run Prusa printer through HTTP proxy and capture whatever it does!
 
