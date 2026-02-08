@@ -1,6 +1,6 @@
 # Prusa Buddy3D Camera hacks
 
-![camera image](./camera_small.png)
+![camera image](./camera-small.png)
 
 ![rclone image](./rclone.png)
 
