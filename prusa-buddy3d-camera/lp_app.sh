@@ -15,6 +15,11 @@ if ! grep 'rtsp_server_mode=2' /userdata/xhr_config.ini ; then
     sed -i 's/rtsp_server_mode=.*/rtsp_server_mode=2/' /userdata/xhr_config.ini
 fi
 
+# max video quality
+if ! grep 'video_quality=7' /userdata/xhr_config.ini ; then
+    sed -i 's/video_quality=.*/video_quality=7/' /userdata/xhr_config.ini
+fi
+
 # copy current config to the microSD card for inspection
 mkdir -p /mnt/sdcard/userdata/current/
 cp /userdata/* /mnt/sdcard/userdata/current/

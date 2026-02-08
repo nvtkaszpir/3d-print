@@ -26,12 +26,17 @@ Major input was taken from [reddit post by j4cbo](https://old.reddit.com/r/prusa
 - a bit of tech skill in text editor
 - camera hardware - this was tested on Prusa Buddy3d Camera that came with Prusa Core One L,
   more hardware details are required to added here
-- firmware 3.1.0 (also worked on 3.1.2 on my setup)
 
 # Known limitations
 
-- tested only on firmware 3.1.0 and 3.1.2
+- tested only on firmware 3.1.0, 3.1.2, 3.1.3
 - sounds used are from the stock rom, they can be misleading :)
+- RTSP is enabled by default on reboot, and this disables WebRTC streaming (and vice-versa),
+  also see [#video-webrtc-mode](video-webrtc-mode)
+- in `sync_loop.sh` by default `SYNC_WHEN_STREAMING=false` is set, which means any active streaming will prevent
+  performing rsync action - in that case stop streaming via Prusa Connect / App and it should sync.
+  Setting SYNC_WHEN_STREAMING=true will force kill lp_app and abort streamings to make a rclone sync.
+- WebRTC streaming is not detected and thus can be killed when timelapse video was detected
 
 # Overview
 
@@ -61,17 +66,20 @@ curl https://connect-ota.prusa3d.com/ | jq '.'
 
 ```
 
-As you can see in the above example the last version available is `3.2.1`.
+As you can see in the above example the last version available is `3.1.2`.
+But we can fetch the newer one if we know the number :)
 
 ## Flashing new firmware to the camera
 
-We use firmware `cam-3.1.0.tar` but it also works with [cam-3.1.2.tar](https://connect-ota.prusa3d.com/file/cam-3.1.2.tar),
+**Notice** Make sure to remove `lp_app.sh` from the sdcard before flashing.
+
+We use firmware `cam-3.1.3.tar` but it also works with [cam-3.1.2.tar](https://connect-ota.prusa3d.com/file/cam-3.1.3.tar),
 generally new firmware works better with the Wi-Fi setups.
 
 - prepare microSD card with a MBR partition table
-- create a signle FAT32 partition on the microSD card
-- download [cam-3.1.0.tar](https://connect-ota.prusa3d.com/file/cam-3.1.0.tar) file to the microSD card
-- rename `cam-3.1.0.tar` to `cus_update_ota.tar`
+- create a single FAT32 partition on the microSD card
+- download [cam-3.1.3.tar](https://connect-ota.prusa3d.com/file/cam-3.1.3.tar) file to the microSD card
+- rename `cam-3.1.3.tar` to `cus_update_ota.tar`
 - safe eject the microSD card
 - turn off the camera from the USB power
 - put microSD card it into the camera
@@ -104,7 +112,7 @@ generally new firmware works better with the Wi-Fi setups.
 - turn off the camera, remove the microSD card
 - put microSD card in the computer
 - copy `lp_app.sh` onto the microSD card
-- generally you need to have a `lp_app.sh` on the microsd card with the content:
+- generally you need to have a `lp_app.sh` on the microSD card with the content:
 
 ```shell
 #!/bin/sh
@@ -128,7 +136,10 @@ lp_app --noshell --log2file /mnt/sdcard/logs &
 
 # Enabling RTSP
 
-This is already a part of the scripts below, generally you need to set `rtsp_server_mode=2` via scripts, see below
+This automatically disables WebRTC streaming.
+
+This is already a part of the scripts below and is enabled by default,
+generally you need to set `rtsp_server_mode=2` via scripts, see below.
 
 # RTSP streaming
 
@@ -230,6 +241,22 @@ mount -o remount,ro /
 - single core cpu - rockchip, so not much compute power is available
 - generally running app for the snapshots + streaming leaves about 6MB of free memory, not much to run anything else
 - worth to see to /userdata and /tmp and /oem directories
+- in 3.1.3 version ntp server is listening on the camera.... hmmm.
+
+# video quality
+
+/userdata/xhr_config.ini video_quality:
+
+- 5 - SD (Standard Definition)
+- 6 - HD (High Definition, default)
+- 7 - FHD (Full High Definition)
+
+# video WebRTC mode
+
+This automatically disables RTSP server.
+Allows streaming over the internet, via control servers owned by Prusa, so as of now there is no option
+to control it in other way, and thus you can use only Prusa app on the mobile devices.
+There is no network service exposed until client requests streaming.
 
 # More advanced settings
 

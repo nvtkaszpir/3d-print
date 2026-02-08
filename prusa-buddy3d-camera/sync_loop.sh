@@ -2,6 +2,9 @@
 
 # config start
 
+# perform sync even if the camera is streaming, default is false
+SYNC_WHEN_STREAMING=false
+
 # volume to use when playing sounds
 VOLUME=60
 
@@ -82,13 +85,24 @@ if ! ps | grep -v grep | grep -q 'lp_app '; then
     lp_app --noshell --log2file /mnt/sdcard/logs &
 fi
 
-# do nothing if the camera is streaming via rtmp
-if netstat -ln 2>&1 | grep 0.0.0.0:554 | grep -q LISTEN; then
-    sync_log "rtmp_check: lp_app is streaming, skipping actions"
-    sleep $loop_time
-    continue
-fi
+if [ "$SYNC_WHEN_STREAMING" = "false" ]; then
 
+  # do nothing if the camera is streaming via rtmp
+  if netstat -ln 2>&1 | grep 0.0.0.0:554 | grep -q LISTEN; then
+      sync_log "rtmp_check: lp_app is streaming via rtmp, skipping actions"
+      sleep $loop_time
+      continue
+  fi
+
+  # do nothing if the camera is streaming via webrtc
+  # udp only, no rtmp, no ntp,
+  if netstat -ln 2>&1 | grep ^udp | grep -v ':554 ' | grep -v ':123 ' | grep -q 0.0.0.0 ; then
+      sync_log "rtmp_check: lp_app is streaming via webrtc, skipping actions"
+      sleep $loop_time
+      continue
+  fi
+
+fi
 
 # do nothing if the camera is merging images into an avi timelapse
 avi_processing=$(lsof -n | grep lp_app | grep -c /mnt/sdcard/timelapse/ | grep avi | wc -l)
