@@ -26,6 +26,13 @@ RCLONE_SRC=buddy3dcam:/mnt/sdcard/timelapse/
 # rclone destination for file/directory move
 RCLONE_DST=bagno-smb:media/prusa/
 
+# trasnfers 1 is required because it generally is a problem on the camera
+COMMON_RCLONE_OPTIONS="--inplace  --max-buffer-memory 4M --progress --checkers 1 --transfers 1 --check-first  --list-cutoff 32 --name-transform \"suffix_keep_extension=_$(date +%Y.%m.%d_%H.%M.%S)\" --delete-empty-src-dirs --use-mmap"
+
+# advanced tweaking
+# golang gc collection, keep it extremely low to prevent OOMKills, but do not set 0
+GOGC=5
+
 # config end
 
 # rclone/camera loop
@@ -57,6 +64,8 @@ sync_log "starting..."
 # core configs, do not modify
 loop_time=1s
 
+export COMMON_RCLONE_OPTIONS
+export GOGC
 export RCLONE_CONFIG
 export RCLONE_LOG_LEVEL
 export RCLONE_LOG_FILE
@@ -83,6 +92,8 @@ fi
 if ! ps | grep -v grep | grep -q 'lp_app '; then
     sync_log "lp_app_check: lp_app is not running, starting"
     lp_app --noshell --log2file /mnt/sdcard/logs &
+    sleep 30
+    continue
 fi
 
 if [ "$SYNC_WHEN_STREAMING" = "false" ]; then
@@ -124,7 +135,20 @@ fi
 if [ -f /mnt/sdcard/timelapse/.timelapse_videos.csv ]; then
     sync_log "csv_check: timelapse files created!"
 fi
-# todo check if network is available, so we do not kill lp_app when there is no network yet
+
+# should prevent killing lp_app too fast
+if ! ifconfig wlan0 | grep inet; then
+  sync_log "wifi_check: no wifi detected, not doing sync"
+  sleep 10
+  continue
+fi
+
+# do not perform any sync if the /mnt/sdcard/debug.txt is on the microsd card, will keep lp_app up and running
+if [ -f /mnt/sdcard/debug.txt ]; then
+    sync_log "debug_check: /mnt/sdcard/debug.txt exists, not doing sync"
+    sleep $loop_time
+    continue
+fi
 
 # play sound so we scare the users
 simple_ao -i /oem/usr/etc/as.wav -v $VOLUME
@@ -138,11 +162,29 @@ done
 
 # run rclone for jpg,avi, then csv, optionally renaming files if the already exist on target location, so that we do not overwrite them by accident
 sync_log "sync: starting rclone processing, please wait"
+
+# sync setion
+# remove --name-transform to overwrite files, this will cause 'unknown_timelapse.avi' and similiar files to be overwritten, so make sure to set the print so that time lapse has a name from gcode
 # keep rclone settings very low to avoid out of memory kills
-$RCLONE_EXE --log-file $RCLONE_LOG_FILE move $RCLONE_SRC $RCLONE_DST      --include '*.{jpg,avi}' --inplace --max-buffer-memory 1M --max-backlog 100 --max-connections 2 --transfers 1 --progress --check-first --checkers=1 --name-transform "suffix_keep_extension=_$(date +%Y.%m.%d_%H.%M.%S)" --delete-empty-src-dirs
-$RCLONE_EXE --log-file $RCLONE_LOG_FILE move $RCLONE_SRC $RCLONE_DST      --include '*.{csv}'     --inplace --max-buffer-memory 1M --max-backlog 100 --max-connections 2 --transfers 1 --progress --check-first --checkers=1 --name-transform "suffix_keep_extension=_$(date +%Y.%m.%d_%H.%M.%S)" --delete-empty-src-dirs
+
+# sftp specific, commented out because it is slow
+#$RCLONE_EXE --log-file $RCLONE_LOG_FILE move $RCLONE_SRC $RCLONE_DST      --include '*.{avi}' --inplace  --max-buffer-memory 2M --progress --checkers 1 --transfers 1 --list-cutoff=32 --name-transform "suffix_keep_extension=_$(date +%Y.%m.%d_%H.%M.%S)" --delete-empty-src-dirs --sftp-chunk-size 255k
+
+# recommended for smb sync, which allows 4 chunked uploads in parallel
+# also mmap helps a bit but is experimental, disable it if there are crashes
+# keep jpeg and avi separated, somehow mixed multipart transfers are problematic
+$RCLONE_EXE --log-file $RCLONE_LOG_FILE move $RCLONE_SRC $RCLONE_DST      --include '*.{avi}' $COMMON_RCLONE_OPTIONS
+
+# jpeg files can be in milions so maybe in the future it would be better to just wipe it without sync?
+$RCLONE_EXE --log-file $RCLONE_LOG_FILE move $RCLONE_SRC $RCLONE_DST      --include '*.{jpg}' $COMMON_RCLONE_OPTIONS
+
+# old entry, now commented out, avi and jpeg combined together
+#$RCLONE_EXE --log-file $RCLONE_LOG_FILE move $RCLONE_SRC $RCLONE_DST      --include '*.{jpg,avi}' --inplace --max-buffer-memory 1M --max-connections 2 --transfers 1 --progress --check-first --checkers=1 --name-transform "suffix_keep_extension=_$(date +%Y.%m.%d_%H.%M.%S)" --delete-empty-src-dirs
+
+# keep below two at the end, csv and log
+$RCLONE_EXE --log-file $RCLONE_LOG_FILE move $RCLONE_SRC $RCLONE_DST      --include '*.{csv}' $COMMON_RCLONE_OPTIONS
 # explicitly do not use log file when moving previous rclone logs
-$RCLONE_EXE                             move $RCLONE_LOG_FILE $RCLONE_DST --include '*.{log}'     --inplace --max-buffer-memory 1M --max-backlog 100 --max-connections 2 --transfers 1 --progress --check-first --checkers=1 --name-transform "suffix_keep_extension=_$(date +%Y.%m.%d_%H.%M.%S)"
+$RCLONE_EXE                             move $RCLONE_LOG_FILE $RCLONE_DST --include '*.{log}' $COMMON_RCLONE_OPTIONS
 
 sync_log "sync: rclone processing complete"
 

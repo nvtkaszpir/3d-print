@@ -12,6 +12,12 @@ You can damage your camera in a way that it will be non-operational (brick).
 
 Do not do it, you have been warned.
 
+# Notice
+
+Generally speaking it's not worth to use the thigns described below, except the telnet.
+Exporting data via rclone will lead to OOMKills or being so slow it is unusable.
+Better set permanent streaming and record via mediamtx on another machine.
+
 # Acknowledgements
 
 This would not be created without a help of some people over the internet
