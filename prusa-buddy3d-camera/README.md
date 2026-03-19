@@ -167,7 +167,7 @@ generally you need to set `rtsp_server_mode=2` via scripts, see below.
 
 # Adding camera to Home Assistant
 
-make sure to replate the IP address of the camera.
+make sure to replace the IP address of the camera.
 
 - add new Generic Camera
 - Still image URL - leave empty
