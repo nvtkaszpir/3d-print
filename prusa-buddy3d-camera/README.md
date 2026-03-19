@@ -10,12 +10,15 @@ Whatever you do to your camera based on the text in this readme,
 you do at our own risk, no warranty.
 You can damage your camera in a way that it will be non-operational (brick).
 
-Do not do it, you have been warned.
-
 # Notice
 
-Generally speaking it's not worth to use the thigns described below, except the telnet.
+Just use lp_app.sh enable telnet and RTSP and that's all.
+
+Do not use lp_app_rcone.sh (used in the later section of this document), you have been warned.
+Generally speaking it's not worth to use the thigns described below, except the telnet and RTSP streaming.
+The resources on the camera are too low to run rclone or anything else with golang.
 Exporting data via rclone will lead to OOMKills or being so slow it is unusable.
+
 Better set permanent streaming and record via mediamtx on another machine.
 
 # Acknowledgements
@@ -143,6 +146,7 @@ lp_app --noshell --log2file /mnt/sdcard/logs &
 # Enabling RTSP
 
 This automatically disables WebRTC streaming.
+This is also enabled in the `lp_app.sh`
 
 This is already a part of the scripts below and is enabled by default,
 generally you need to set `rtsp_server_mode=2` via scripts, see below.
@@ -160,6 +164,23 @@ generally you need to set `rtsp_server_mode=2` via scripts, see below.
 - under Linux you can just try in the terminal:
   `ffplay rtsp://camera_ip_address/live` such as
   `ffplay rtsp://192.168.1.75/live`
+
+# Adding camera to Home Assistant
+
+make sure to replate the IP address of the camera.
+
+- add new Generic Camera
+- Still image URL - leave empty
+- Stream source URL: `rtsp://192.168.1.75:554/live`
+- RTSP transport protocol - do not select anything
+- Authentication - do not select anything or leave on `basic` and leave Username and Password fields empty
+- Frame rate (Hz): `30`
+- anything else leave unselected
+- add submit (force add without checking)
+
+# The leftovers
+
+Anything below this point is no longer useable.
 
 ## Disable RTSP
 
@@ -192,7 +213,7 @@ Or disable/enable it via PrusaConnet.
 
 - turn off the camera, remove the microSD card
 - put microSD card in the computer
-- copy `lp_app.sh` onto the microSD card
+- copy `lp_app_rsync.sh` onto the microSD card and rename it to `lp_app.sh`
 - **THIS IS REQUIRED** edit `sync_loop.sh` and change `RCLONE_DST` to the valid rclone remote you tested in the step above
 - copy `sync_loop.sh` onto the microSD card
 - copy `rclone.conf` onto the microSD card
